@@ -1,0 +1,1 @@
+{"result":{"text":"A to the power of 2 minus end exponent"},"status":"ok"}

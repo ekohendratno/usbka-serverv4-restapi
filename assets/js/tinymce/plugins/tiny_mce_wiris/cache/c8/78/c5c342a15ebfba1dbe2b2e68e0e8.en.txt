@@ -1,0 +1,1 @@
+{"result":{"text":"integral 2 x squared open parentheses 4 x minus 1 close parentheses d x"},"status":"ok"}

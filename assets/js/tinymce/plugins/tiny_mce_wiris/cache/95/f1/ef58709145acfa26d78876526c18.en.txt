@@ -1,0 +1,1 @@
+{"result":{"text":"M presubscript 12 presuperscript 23 g space dan space C presubscript 20 presuperscript 20 a"},"status":"ok"}

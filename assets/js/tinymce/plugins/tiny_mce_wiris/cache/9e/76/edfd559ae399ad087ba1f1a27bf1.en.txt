@@ -1,0 +1,1 @@
+{"result":{"text":"C presubscript 20 presuperscript 40 a space dan space K presubscript 19 presuperscript 39"},"status":"ok"}

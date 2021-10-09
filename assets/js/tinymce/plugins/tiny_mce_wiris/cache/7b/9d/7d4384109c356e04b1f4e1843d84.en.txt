@@ -1,0 +1,1 @@
+{"result":{"text":"2 log 48 plus log presuperscript 2 minus 2 log 3"},"status":"ok"}

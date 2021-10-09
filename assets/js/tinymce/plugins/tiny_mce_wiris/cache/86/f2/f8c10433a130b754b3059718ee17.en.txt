@@ -1,0 +1,1 @@
+{"result":{"text":"12 x cubed minus 4 x"},"status":"ok"}

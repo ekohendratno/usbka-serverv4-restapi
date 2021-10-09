@@ -1,0 +1,1 @@
+{"result":{"text":"log presuperscript 2 5 equals p"},"status":"ok"}

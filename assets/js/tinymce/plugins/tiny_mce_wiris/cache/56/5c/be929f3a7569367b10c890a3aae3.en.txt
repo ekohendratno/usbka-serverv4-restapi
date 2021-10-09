@@ -1,0 +1,1 @@
+{"result":{"text":"open parentheses 27 close parentheses to the power of 1 third end exponent plus open parentheses 16 close parentheses to the power of 3 over 2 end exponent minus open parentheses 81 close parentheses to the power of 1 fourth end exponent equals"},"status":"ok"}

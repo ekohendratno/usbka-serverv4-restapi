@@ -1,0 +1,1 @@
+{"result":{"text":"N presubscript 10 e"},"status":"ok"}

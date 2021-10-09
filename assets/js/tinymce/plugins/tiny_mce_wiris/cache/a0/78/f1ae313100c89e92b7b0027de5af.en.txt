@@ -1,0 +1,1 @@
+{"result":{"text":"6 X to the power of 10"},"status":"ok"}

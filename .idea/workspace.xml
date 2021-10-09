@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="0a58b7b8-52a5-494e-a004-22d3b70fd46a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/_.htaccess" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/database.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/Apiv3.php" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1rxonJeguNQa2IkMcoS2Te2nRtt" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/application/controllers" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\www\usbka-serverv4-restapi\application\controllers" />
+      <recent name="C:\www\usbka-serverv4-restapi\application\views\apiv4" />
+      <recent name="C:\www\usbka-serverv4-restapi\application\views" />
+    </key>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0a58b7b8-52a5-494e-a004-22d3b70fd46a" name="Default Changelist" comment="" />
+      <created>1619927266536</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1619927266536</updated>
+      <workItem from="1619927267817" duration="2738000" />
+      <workItem from="1619963483119" duration="644000" />
+      <workItem from="1620014036620" duration="567000" />
+      <workItem from="1620052834963" duration="2617000" />
+      <workItem from="1620077020013" duration="6960000" />
+      <workItem from="1620106042693" duration="4415000" />
+      <workItem from="1620130300157" duration="1436000" />
+      <workItem from="1620132966558" duration="789000" />
+      <workItem from="1620166784402" duration="1586000" />
+      <workItem from="1620181637572" duration="1537000" />
+      <workItem from="1620189070106" duration="681000" />
+      <workItem from="1620191459833" duration="358000" />
+      <workItem from="1620221211191" duration="2259000" />
+      <workItem from="1620259193509" duration="8000" />
+      <workItem from="1620260725245" duration="772000" />
+      <workItem from="1620294750488" duration="166000" />
+      <workItem from="1620315750649" duration="1293000" />
+      <workItem from="1620908492102" duration="600000" />
+      <workItem from="1621556230992" duration="279000" />
+      <workItem from="1621602121089" duration="849000" />
+      <workItem from="1621778721258" duration="359000" />
+      <workItem from="1621859983895" duration="1531000" />
+      <workItem from="1621912531429" duration="2023000" />
+      <workItem from="1621936761033" duration="40000" />
+      <workItem from="1621936819543" duration="100000" />
+      <workItem from="1622200932000" duration="5908000" />
+      <workItem from="1622426725180" duration="603000" />
+      <workItem from="1622439761590" duration="16922000" />
+      <workItem from="1622548527439" duration="3069000" />
+      <workItem from="1622606632488" duration="36000" />
+      <workItem from="1622806327204" duration="4037000" />
+      <workItem from="1622859670378" duration="25000" />
+      <workItem from="1622881568824" duration="601000" />
+      <workItem from="1622982225896" duration="608000" />
+      <workItem from="1632473895053" duration="220000" />
+      <workItem from="1632474966041" duration="40000" />
+      <workItem from="1632486480196" duration="4921000" />
+      <workItem from="1632825839380" duration="13749000" />
+      <workItem from="1632878453127" duration="271000" />
+      <workItem from="1632884488968" duration="1294000" />
+      <workItem from="1632903182668" duration="3200000" />
+      <workItem from="1632998619446" duration="593000" />
+      <workItem from="1633196485834" duration="18000" />
+      <workItem from="1633266746013" duration="5216000" />
+      <workItem from="1633314179713" duration="1798000" />
+      <workItem from="1633342892191" duration="710000" />
+      <workItem from="1633353693209" duration="910000" />
+      <workItem from="1633495978515" duration="4156000" />
+      <workItem from="1633516934781" duration="1731000" />
+      <workItem from="1633525939406" duration="2524000" />
+      <workItem from="1633565486582" duration="5432000" />
+      <workItem from="1633596646446" duration="9917000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="463" y="120" key="FileChooserDialogImpl" timestamp="1633528903906">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="463" y="120" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1633528903906" />
+    <state x="517" y="288" key="NewPhpFileDialog" timestamp="1632836125970">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="517" y="288" key="NewPhpFileDialog/0.0.1366.728@0.0.1366.728" timestamp="1632836125970" />
+    <state x="379" y="96" width="607" height="536" key="find.popup" timestamp="1633523904231">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="379" y="96" width="607" height="536" key="find.popup/0.0.1366.728@0.0.1366.728" timestamp="1633523904231" />
+    <state x="339" y="162" key="run.anything.popup" timestamp="1633565578465">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="339" y="162" key="run.anything.popup/0.0.1366.728@0.0.1366.728" timestamp="1633565578465" />
+  </component>
+</project>

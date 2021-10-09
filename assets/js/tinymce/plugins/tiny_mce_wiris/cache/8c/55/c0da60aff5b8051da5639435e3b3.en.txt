@@ -1,0 +1,1 @@
+{"result":{"text":"x plus 5 y space greater or equal than 10 semicolon space 3 x space plus space 4 y space greater or equal than space 24 semicolon space x greater or equal than 0 semicolon space y greater or equal than 0"},"status":"ok"}

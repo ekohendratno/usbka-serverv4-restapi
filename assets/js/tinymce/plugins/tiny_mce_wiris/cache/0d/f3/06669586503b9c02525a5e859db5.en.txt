@@ -1,0 +1,1 @@
+{"result":{"text":"2 log 5 equals p"},"status":"ok"}

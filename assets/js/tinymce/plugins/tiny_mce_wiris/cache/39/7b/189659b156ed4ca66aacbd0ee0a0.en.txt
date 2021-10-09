@@ -1,0 +1,1 @@
+{"result":{"text":"left parenthesis fraction numerator 2 p to the power of 5 q to the power of negative 5 end exponent right parenthesis to the power of negative 2 end exponent over denominator 32 p to the power of 9 q to the power of negative 1 end exponent end fraction"},"status":"ok"}

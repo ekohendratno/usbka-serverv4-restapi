@@ -1,0 +1,1 @@
+{"result":{"text":"M presubscript 12 g to the power of plus"},"status":"ok"}

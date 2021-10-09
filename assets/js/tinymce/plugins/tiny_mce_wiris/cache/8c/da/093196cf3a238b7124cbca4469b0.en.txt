@@ -1,0 +1,1 @@
+{"result":{"text":"union subscript eta equals space 3 eta squared minus 1"},"status":"ok"}

@@ -1,0 +1,1 @@
+{"result":{"text":"eta squared plus 1"},"status":"ok"}

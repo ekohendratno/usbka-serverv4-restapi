@@ -1,0 +1,1 @@
+{"result":{"text":"8 X to the power of 16"},"status":"ok"}

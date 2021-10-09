@@ -1,0 +1,1 @@
+{"result":{"text":"straight m squared"},"status":"ok"}

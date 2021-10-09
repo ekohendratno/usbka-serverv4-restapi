@@ -1,0 +1,1 @@
+{"result":{"text":"limit as x rightwards arrow 2       of fraction numerator x squared plus 4 x minus 12 over denominator x minus 2 end fraction equals"},"status":"ok"}

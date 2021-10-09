@@ -1,0 +1,1 @@
+{"result":{"text":"A presubscript 13 13 to the power of plus"},"status":"ok"}

@@ -1,0 +1,1 @@
+{"result":{"text":"O presubscript 8 superscript 2 minus end superscript"},"status":"ok"}

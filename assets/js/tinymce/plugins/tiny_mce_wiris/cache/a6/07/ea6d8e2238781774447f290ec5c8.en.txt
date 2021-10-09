@@ -1,0 +1,1 @@
+{"result":{"text":"3 x to the power of 4 minus x squared"},"status":"ok"}
