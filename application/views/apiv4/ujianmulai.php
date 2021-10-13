@@ -85,7 +85,6 @@
 
 
     <script type="text/javascript">$('#loading_ajax').show();</script>
-    <script src="<?php echo base_url();?>assets/js/tinymce/plugins/tiny_mce_wiris/integration/WIRISplugins.js?viewer=image"></script>
 </head>
 <body>
 <div id="loading_ajax"><center style="padding:20px;"><div class="_ani_loading"><span style="clear:both">Memuat...</span></div></center></div>

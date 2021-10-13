@@ -613,19 +613,19 @@ class Apiv4 extends CI_Controller
                 $_ragu = "rg_" . $i;
 
                 $jawaban_ = '';
-                if ($p->$_tjenis == 'essay') {
-                    $_tessay = "essay_" . $i;
-
-                    $jawaban_ = empty($p->$_tessay) ? "" : $p->$_tessay;
-
-                    //$update_ .= "".$p->$_tidsoal.":".$p->$_tjenis.":".$p->$_ragu.":".$jawaban_.",";
-
-                } else {
-                    $_tjawab = "opsi_" . $i;
+                if( $p->$_tjenis == 'optional' ){
+                    $_tjawab 	= "opsi_".$i;
 
                     $jawaban_ = empty($p->$_tjawab) ? "" : $p->$_tjawab;
                     //$update_ .= "".$p->$_tidsoal.":".$p->$_tjenis.":".$p->$_ragu.":".$jawaban_.",";
                     //0,1,2,3
+
+                }else{
+                    $_tessay 	= "essay_".$i;
+
+                    $jawaban_ = empty($p->$_tessay) ? "" : $p->$_tessay;
+
+                    //$update_ .= "".$p->$_tidsoal.":".$p->$_tjenis.":".$p->$_ragu.":".$jawaban_.",";
                 }
 
                 //untuk memfilter karakter jawaban yang tidak terformat
@@ -644,6 +644,11 @@ class Apiv4 extends CI_Controller
             $total_soal = 0;
             $jumlah_soal = $p->jml_soal;
 
+
+
+            $aa = array();
+            $aa["a"] = array();
+            $aa["b"] = array();
             foreach ($update_ as $val) {
                 //$pc_ret_urn = explode(":", $value);
 
@@ -652,28 +657,22 @@ class Apiv4 extends CI_Controller
                 $ragu = $val[2];
                 $jawaban = $val[3];
 
-                if ($jenis == 'optional') {
+                if ($jenis == 'optional' && $jawaban != "") {
 
                     $ambil_soal = $this->db->get_where('soal', array('soal_id' => $id_soal))->result();
                     foreach ($ambil_soal as $s) {
                         $pc_jawaban2 = json_decode($s->soal_text_jawab);
 
-                        $nomor_jawaban_a = 1;
-                        $nomor_jawaban_b = 1;
+                        $nomor_jawaban = 1;
                         foreach ($pc_jawaban2 as $val2) {
                             if( $val2[0] == 1){
-                                $nomor_jawaban_b = $nomor_jawaban_a;
+                                if( $nomor_jawaban == $jawaban){
+                                    $jumlah_benar++;
+                                }
                             }
-                            $nomor_jawaban_a++;
+                            $nomor_jawaban++;
                         }
 
-
-                        if( $nomor_jawaban_b == $jawaban){
-                            $jumlah_benar++;
-                        }else{
-                            $jumlah_salah++;
-                        }
-                        //$jumlah_soal++;
                         $total_soal++;
 
                     }
@@ -683,20 +682,21 @@ class Apiv4 extends CI_Controller
             }
 
 
+            $jumlah_salah = $jumlah_soal-$jumlah_benar;
+
             $jumlah_nilai = ($jumlah_benar / $jumlah_soal) * 100;
 
             $jumlah_none = $jumlah_soal - $total_soal;
 
 
 
+
             //$update_ = substr($update_, 0, -1);
             $update_ = json_encode($update_);
 
-            $where = array(
+            $this->db->where(array(
                 'soal_jawab_id'   => $id
-            );
-
-            $this->db->where($where);
+            ));
             $this->db->update('soal_jawab', array(
 
                 'soal_jawab_benar' => $jumlah_benar,
@@ -757,21 +757,31 @@ class Apiv4 extends CI_Controller
                 $ragu = $val[2];
                 $jawaban = $val[3];
 
-                if ($jenis == 'optional') {
+                if ($jenis == 'optional' && $jawaban != "") {
 
                     $ambil_soal = $this->db->get_where('soal', array('soal_id' => $id_soal))->result();
-                    if ($ambil_soal[0]->soal_text_jawab == $jawaban) {
-                        $jumlah_benar++;
-                    } else {
-                        $jumlah_salah++;
+                    foreach ($ambil_soal as $s) {
+                        $pc_jawaban2 = json_decode($s->soal_text_jawab);
+
+                        $nomor_jawaban = 1;
+                        foreach ($pc_jawaban2 as $val2) {
+                            if( $val2[0] == 1){
+                                if( $nomor_jawaban == $jawaban){
+                                    $jumlah_benar++;
+                                }
+                            }
+                            $nomor_jawaban++;
+                        }
+
+                        $total_soal++;
+
                     }
-                    //$jumlah_soal++;
-                    $total_soal++;
 
                 }
 
             }
 
+            $jumlah_salah = $jumlah_soal-$jumlah_benar;
 
             $jumlah_nilai = ($jumlah_benar / $jumlah_soal) * 100;
 
@@ -918,7 +928,7 @@ class Apiv4 extends CI_Controller
         }
     }
 
-    function _generateRandomString($length = 6) {
+    function _generateRandomString($length = 3) {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';

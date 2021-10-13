@@ -15,7 +15,7 @@ class Apiv3 extends CI_Controller
         $this->new_version_code = 400;
         $this->new_version_name = "CBT Versi 4.00";
 
-        $this->cronjob();
+        //$this->cronjob();
     }
 
     function index(){
