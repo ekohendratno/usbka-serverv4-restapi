@@ -186,6 +186,7 @@ glyphicon glyphicon-time"></span></div>
                                             $opsi2 = array("A","B","C","D","E");
                                             for($j = 0; $j<=4; $j++) {
 
+
                                                 //$opsox = $j + 1;
                                                 $opsional = 'opsi_' . $opsi[$j] . '_' . $no;
                                                 $checked = $arr_jawab[$item['soal_id']]["j"] == strtoupper($opsi[$j]) ? "checked" : "";
@@ -193,8 +194,11 @@ glyphicon glyphicon-time"></span></div>
 
                                                 $html .= '<div class="funkyradio-success" onclick="return simpan_sementara();">';
                                                 $html .= '<input type="radio" id="'.$opsional.'" name="opsi_'.$no.'" value="'.strtoupper($opsi[$j]).'" '.$checked.'>';
-                                                $html .= '<label for="'.$opsional.'"><div class="huruf_opsi">'.strtoupper($opsi2[$j]).'</div><div class="huruf_opsi_jawaban"><p></p>'.html_entity_decode( $soal_text_jawab[$j][1]).'<p></p></div></label>';
+                                                $html .= '<label for="'.$opsional.'"><div class="huruf_opsi">'.strtoupper($opsi2[$j]).'</div><div class="huruf_opsi_jawaban"><p></p>'.html_entity_decode( !empty($soal_text_jawab[$j][1]) ? $soal_text_jawab[$j][1] : "" ).'<p></p></div></label>';
+
+                                                $html .= '<div class="clearfix"></div><br/><br/>';
                                                 $html .= '</div>';
+
                                             }
                                             $html .= '</div>';
 

@@ -5,8 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/config/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/config.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/database.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/Apiv3.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/Apiv3.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/Apiv4.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/Apiv4.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/views/apiv4/ujianmulai.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/apiv4/ujianmulai.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -120,6 +118,7 @@
       <workItem from="1634004755835" duration="76000" />
       <workItem from="1634051905113" duration="1562000" />
       <workItem from="1634053510536" duration="4880000" />
+      <workItem from="1634092860118" duration="3331000" />
     </task>
     <servers />
   </component>
