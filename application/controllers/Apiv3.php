@@ -12,8 +12,8 @@ class Apiv3 extends CI_Controller
         $this->load->helpers('url');
 
 
-        $this->new_version_code = 400;
-        $this->new_version_name = "CBT Versi 4.00";
+        $this->new_version_code = 404;
+        $this->new_version_name = "CBT Versi 4.04";
 
         //$this->cronjob();
     }
@@ -117,7 +117,7 @@ class Apiv3 extends CI_Controller
         $response["response"] = array(
             "code" => $this->new_version_code,
             "name" => $this->new_version_name,
-            "link" => $this->config->item('base_url_cbt') . "/update"
+            "link" => $this->config->item('base_url') . "/apiv3/autoupdate"
 
         );
 
@@ -163,7 +163,7 @@ class Apiv3 extends CI_Controller
             <p>Proses download <?php echo $this->new_version_name;?> akan berlangsung secara otomatis, jika tidak download <a href="<?php echo base_url("uploads/autoupdate/cbt".$this->new_version_code.".apk");?>">manual</a>.</p>
         </center>
         <script type="text/javascript">
-            location.href = '<?php echo base_url("uploads/autoupdate/cbt".$this->new_version_code.".apk");?>'
+            location.href = '<?php echo base_url("assets/update/cbt".$this->new_version_code.".apk");?>'
         </script>
 
         </body>

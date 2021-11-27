@@ -25,28 +25,35 @@ class Cari extends CI_Controller
 
 
 
-        if(!empty($by) && $by != null){
+        //if(!empty($nomor) && empty($by)){
+
+        //$this->db->where('soal_jawab.soal_jawab_ruangan',$nomor);
+        //jika waktu selesai lebih dari 600 detik atau 30 menit
+        //$this->db->where('soal_jawab.soal_jawab_last_update >= ', date('Y-m-d H:i', strtotime("-1800 second"))); //30menit = 1800 detik
+        //}
+
+
+        //$this->db->where('soal_jawab.soal_jawab_last_update >= ', date('Y-m-d H:i:s', strtotime("-1800 second")));
+
+        $this->db->where('soal_jawab.soal_jawab_ruangan', $nomor);
+        $this->db->where('soal_jawab.soal_jawab_tanggal', $tgl);
+
+        if(!empty($by) && $by != null && $by != ""){
             $this->db->like('peserta.peserta_nama',$by);
         }
 
-        if(!empty($nomor) && empty($by)){
-
-            $this->db->where('soal_jawab.soal_jawab_ruangan',$nomor);
-            //jika waktu selesai lebih dari 600 detik atau 30 menit
-            $this->db->where('soal_jawab.soal_jawab_last_update >= ', date('Y-m-d H:i', strtotime("-1800 second"))); //30menit = 1800 detik
-        }
-
-
-
+        $this->db->order_by('soal_jawab.soal_jawab_id','desc');
         $this->db->order_by('soal_jawab.soal_jawab_last_update','desc');
-
-        $this->db->limit(30);
+        $this->db->limit(40);
 
 
         $users = $this->db->get();
         if ($users->num_rows() > 0) {
 
             foreach ($users->result_array() as $r2) {
+
+                //$tt2 = date('Y-m-d H:i:s', strtotime($r2['soal_jawab_last_update']));
+
 
                 $item = array();
                 $item['ruangan'] = $nomor;
@@ -70,19 +77,8 @@ class Cari extends CI_Controller
                 $item['soal_jawab_ok'] = $r2['soal_jawab_ok'];
                 $item['soal_jawab_none'] = $r2['soal_jawab_none'];
 
-                $terjawab = 0;
-                $tidakterjawab = 0;
-                $soal_jawab_list_opsi = json_decode( $r2['soal_jawab_list_opsi'] );
-                foreach($soal_jawab_list_opsi as $opsi){
-                    if(!empty($opsi[3])){
-                        $terjawab++;
-                    }else{
-                        $tidakterjawab++;
-                    }
-
-                }
-                $item['soal_jawab_terjawab'] = $terjawab;
-                $item['soal_jawab_tidakterjawab'] = $tidakterjawab;
+                $item['soal_jawab_terjawab'] = $r2['soal_jawab_ok'];
+                $item['soal_jawab_tidakterjawab'] = $r2['soal_jawab_none'];
 
 
                 $item['soal_jawab_ruangan'] = $r2['soal_jawab_ruangan'];
@@ -97,8 +93,34 @@ class Cari extends CI_Controller
                     $sembunyikan = 1;
                 }
                 $item['soal_jawab_status'] = $r2['soal_jawab_status'];
+                $item['soal_jawab_last_update'] = $r2['soal_jawab_last_update'];
 
+
+
+                $sekarang = date('Y-m-d H:i:s');
+                $update_terakhir = date('Y-m-d H:i:s', strtotime($r2['soal_jawab_last_update'] ." +1800 second"));
+                $update_terakhir_jauh = date('Y-m-d H:i:s', strtotime($r2['soal_jawab_last_update'] ." +3600 second"));
+
+
+
+                $tampil = true;
+                if( $sekarang > $update_terakhir ){
+                    $tampil = false;
+                }
+
+                if( $r2['soal_jawab_status'] == "Y" ){
+                    $tampil = true;
+
+                    if( $sekarang > $update_terakhir_jauh ){
+                        $tampil = false;
+                    }
+                }
+
+                //if($tampil){
                 array_push($response["response"], $item);
+
+                //}
+
 
             }
 

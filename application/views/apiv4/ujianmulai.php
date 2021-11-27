@@ -182,7 +182,7 @@ glyphicon glyphicon-time"></span></div>
                                             $soal_text_jawab = json_decode($item['soal_text_jawab']);
                                             $html .= '<div class="funkyradio">';
 
-                                            $opsi = array("1","2","3","4","5");
+                                            $opsi = array("0","1","2","3","4");
                                             $opsi2 = array("A","B","C","D","E");
                                             for($j = 0; $j<=4; $j++) {
 
