@@ -29,6 +29,11 @@ class Apiv4 extends CI_Controller
         $password = $this->input->get('p');
 
         $response = array();
+
+        $response["success"] = false;
+        $response["response"] = "Silahkan update ke versi terbaru";
+
+        /**
         if(empty($username) || empty($password)){
             $response["success"] = false;
             $response["response"] = "Username atau Password kosong!";
@@ -88,7 +93,7 @@ class Apiv4 extends CI_Controller
 
 
 
-        }
+        }*/
 
         $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
         echo json_encode($response,JSON_UNESCAPED_UNICODE);

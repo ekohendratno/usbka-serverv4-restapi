@@ -43,10 +43,11 @@ class Apiv5 extends CI_Controller
 
             $response["success"] = true;
             $response["response"] = array(
-                "wajib" => 1,
+                "wajib" => 0,
                 "pesan" => "Ditemukan versi terbaru ".$v->version_nama.", silahkan luangkan waktu untuk memperbarui aplikasi!",
                 "name" => $v->version_nama,
                 "code" => $v->version_nomor,
+                //"link" => $this->config->item('base_url') . '/download/android'
                 "link" => $this->config->item('base_url') . '/assets/update/cbt'.$v->version_nomor.'.apk'
                 //"link" => $this->config->item('base_url_cbt') . '/uploads/cbt'.$v->version_nomor.'.apk'
 

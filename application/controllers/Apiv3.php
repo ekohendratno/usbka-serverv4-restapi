@@ -12,8 +12,8 @@ class Apiv3 extends CI_Controller
         $this->load->helpers('url');
 
 
-        $this->new_version_code = 404;
-        $this->new_version_name = "CBT Versi 4.04";
+        $this->new_version_code = 405;
+        $this->new_version_name = "CBT Versi 4.05";
 
         //$this->cronjob();
     }
@@ -199,6 +199,8 @@ class Apiv3 extends CI_Controller
         $response["response"] = array();
 
 
+        /**
+
         $this->db->select('*')->from('users');
         $this->db->where("username",$username);
         $this->db->where("password",$password);
@@ -244,7 +246,9 @@ class Apiv3 extends CI_Controller
         }else{
             $response["success"] = false;
             $response["response"] = "Tidak ditemukan data";
-        }
+        }*/
+        $response["success"] = false;
+        $response["response"] = "Silahkan update ke versi terbaru";
 
         $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
@@ -259,6 +263,7 @@ class Apiv3 extends CI_Controller
         $response["response"] = array();
 
 
+        /**
         $this->db->select('*')->from('users');
         $this->db->where("username", $username);
         $this->db->where("password", $password);
@@ -268,7 +273,10 @@ class Apiv3 extends CI_Controller
 
         }else{
             $response["success"] = false;
-        }
+        }*/
+
+
+        $response["success"] = false;
 
         $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
