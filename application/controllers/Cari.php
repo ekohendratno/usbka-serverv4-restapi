@@ -33,7 +33,7 @@ class Cari extends CI_Controller
         //}
 
 
-        //$this->db->where('soal_jawab.soal_jawab_last_update >= ', date('Y-m-d H:i:s', strtotime("-1800 second")));
+        $this->db->where('soal_jawab.soal_jawab_last_update >= ', date('Y-m-d H:i:s', strtotime("-1800 second")));
 
         $this->db->where('soal_jawab.soal_jawab_ruangan', $nomor);
         $this->db->where('soal_jawab.soal_jawab_tanggal', $tgl);
@@ -42,8 +42,8 @@ class Cari extends CI_Controller
             $this->db->like('peserta.peserta_nama',$by);
         }
 
-        $this->db->order_by('soal_jawab.soal_jawab_id','desc');
         $this->db->order_by('soal_jawab.soal_jawab_last_update','desc');
+        $this->db->order_by('peserta.peserta_nama','asc');
         $this->db->limit(40);
 
 

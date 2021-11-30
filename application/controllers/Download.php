@@ -5,6 +5,7 @@ class Download extends CI_Controller {
     function __construct() {
         parent::__construct();
 
+		$this->load->helpers('url');
     }
 
 	function index()
@@ -25,7 +26,8 @@ class Download extends CI_Controller {
 
 			$this->db->where("version_nomor",$v->version_nomor);
 			$this->db->update("version",array("version_hits" => ($hits+1) ));
-			$this->redirect2('assets/update/cbt'.$v->version_nomor.'.apk');
+
+			redirect('assets/update/cbt'.$v->version_nomor.'.apk');
 
 
 		}
@@ -33,20 +35,21 @@ class Download extends CI_Controller {
 
 	}
 
-	function redirect2($file){
+	function redirect2($file_path){
 
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/vnd.android.package-archive');
-		header('Content-Disposition: attachment; filename='.basename($file));
+		header('Content-Disposition: attachment; filename='.basename($file_path));
 		header('Content-Transfer-Encoding: binary');
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
-		header('Content-Length: ' . filesize($file));
+		header('Content-Length: ' . filesize($file_path));
 		ob_clean();
 		flush();
-		readfile($file);
+		readfile($file_path);
 		exit;
+
 	}
 }
 ?>
