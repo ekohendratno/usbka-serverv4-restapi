@@ -129,6 +129,14 @@ class Apiv5 extends CI_Controller
 
         }
 
+
+
+        $response["ftp_server"] = "";
+        $response["ftp_port"] = 0;
+        $response["ftp_username"] = "";
+        $response["ftp_password"] = "";
+        $response["ftp_path"] = "";
+
         $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
         echo json_encode($response,JSON_UNESCAPED_UNICODE);
 
