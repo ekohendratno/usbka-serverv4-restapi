@@ -74,7 +74,7 @@ class Apiv5 extends CI_Controller
         }else{
 
             $peserta = $this->db->get_where('peserta',array('peserta_username'=>$username,'peserta_password'=>$password))->row_array();
-            if ( !empty($peserta) ) {
+            if ( !empty($peserta)  ) { //&& $peserta['peserta_lock'] < 1
 
                 $userdata = array();
                 $userdata['uid']        = $peserta['peserta_id'];
@@ -99,7 +99,7 @@ class Apiv5 extends CI_Controller
 
                 $ruangan = $this->input->get('r');
                 $this->db->where( array("peserta_id" => $peserta['peserta_id']) );
-                $this->db->update("peserta",array("peserta_ruangan" => $ruangan));
+                $this->db->update("peserta", array("peserta_ruangan" => $ruangan));
 
             }else{
 
@@ -417,167 +417,176 @@ class Apiv5 extends CI_Controller
         $peserta = $this->db->get_where('peserta',array("peserta_id" => $uid));
         if($peserta->num_rows() > 0) {
 
-            foreach ($peserta->result_array() as $r2) {
-
-                $peserta_id  		= $r2['peserta_id'];
-                $kelas_sekarang  	= $r2['peserta_kelas'];
-                $jurusan_id  		= $r2['peserta_jurusan'];
-                $ruang  			= $r2['peserta_jurusan_ke'];
-                $peserta_agama  	= $r2['peserta_agama'];
-                $bisamulai          = 0;
+            try{
 
 
-                //MULAI GET UJIAN
-                $q1 = $this->db->get_where('ujian',array('ujian_id'=>$ujianid));
+                foreach ($peserta->result_array() as $r2) {
 
-                if($q1->num_rows() > 0){
-                    $ujian = $q1->result();
-
-                    $this->session->set_userdata(array(
-                        'ujian_id'=>$ujianid,
-                        //'ujian_tampil'=>$ujian[0]->ujian_tampil,
-                    ));
-
-                    //cek soal_jawab jika ada get jika tidak insert
-
-                    $ujian_ikut = $this->db->select('*')->from('soal_jawab');
-                    $ujian_ikut = $ujian_ikut->where(array(
-                        'ujian_id'=>$ujianid,
-                        'siswa_id'=>$peserta_id,
-                        'soal_jawab_pelajaran' => $ujian[0]->ujian_pelajaran
-                    ));
-
-                    $ujian_ikut = $ujian_ikut->get();
+                    $peserta_id  		= $r2['peserta_id'];
+                    $kelas_sekarang  	= $r2['peserta_kelas'];
+                    $jurusan_id  		= $r2['peserta_jurusan'];
+                    $ruang  			= $r2['peserta_jurusan_ke'];
+                    $peserta_agama  	= $r2['peserta_agama'];
+                    $bisamulai          = 0;
 
 
-                    //$data['response_ada'] = $ujian_ikut->result();
+                    //MULAI GET UJIAN
+                    $q1 = $this->db->get_where('ujian',array('ujian_id'=>$ujianid));
 
-                    $soaljawab_id = 0;
-                    //cek ujian jika tidak ada insert
-                    if($ujian_ikut->num_rows() < 1){
+                    if($q1->num_rows() > 0){
+                        $ujian = $q1->result();
 
-                        $soal = $this->db->select('*')->from('soal')->where(array(
-                            'soal_kelas'=> $ujian[0]->ujian_kelas,
-                            'soal_guru' => $ujian[0]->ujian_guru,
-                            'soal_pelajaran' => $ujian[0]->ujian_pelajaran
+                        $this->session->set_userdata(array(
+                            'ujian_id'=>$ujianid,
+                            //'ujian_tampil'=>$ujian[0]->ujian_tampil,
                         ));
 
+                        //cek soal_jawab jika ada get jika tidak insert
+
+                        $ujian_ikut = $this->db->select('*')->from('soal_jawab');
+                        $ujian_ikut = $ujian_ikut->where(array(
+                            'ujian_id'=>$ujianid,
+                            'siswa_id'=>$peserta_id,
+                            'soal_jawab_pelajaran' => $ujian[0]->ujian_pelajaran
+                        ));
+
+                        $ujian_ikut = $ujian_ikut->get();
+
+
+                        //$data['response_ada'] = $ujian_ikut->result();
+
+                        $soaljawab_id = 0;
+                        //cek ujian jika tidak ada insert
+                        if($ujian_ikut->num_rows() < 1){
+
+                            $soal = $this->db->select('*')->from('soal')->where(array(
+                                'soal_kelas'=> $ujian[0]->ujian_kelas,
+                                'soal_guru' => $ujian[0]->ujian_guru,
+                                'soal_pelajaran' => $ujian[0]->ujian_pelajaran
+                            ));
 
 
 
-                        //$soal = $soal->where('(soal_kelas=\'\' OR soal_kelas=\''. $ujian[0]->ujian_kelas.'\')');
-                        //$soal = $soal->where('(soal_jurusan=\'\' OR soal_jurusan=\''. $ujian[0]->ujian_jurusan.'\')');
-                        //$soal = $soal->where('(soal_jurusan_ke=\'\' OR soal_jurusan_ke=\''. $ujian[0]->ujian_jurusan_ke.'\')');
+
+                            //$soal = $soal->where('(soal_kelas=\'\' OR soal_kelas=\''. $ujian[0]->ujian_kelas.'\')');
+                            //$soal = $soal->where('(soal_jurusan=\'\' OR soal_jurusan=\''. $ujian[0]->ujian_jurusan.'\')');
+                            //$soal = $soal->where('(soal_jurusan_ke=\'\' OR soal_jurusan_ke=\''. $ujian[0]->ujian_jurusan_ke.'\')');
 
 
-                        if( $ujian[0]->ujian_jenis == "Acak" ){
-                            $soal = $soal->order_by('soal_id','RANDOM');
+                            if( $ujian[0]->ujian_jenis == "Acak" ){
+                                $soal = $soal->order_by('soal_id','RANDOM');
+                            }else{
+                                $soal = $soal->order_by('soal_id','ASC');
+                            }
+
+                            if(  $ujian[0]->ujian_jumlah_soal > 0 ){
+                                $soal = $soal->limit($ujian[0]->ujian_jumlah_soal);
+                            }
+
+                            $soal = $soal->get();
+
+
+                            //$data['response_soal'] = $soal->result();
+
+                            $list_soal = '';
+                            $list_opsi = '';
+
+
+                            $list_soal_array = array();
+                            $list_opsi_array = array();
+
+                            foreach($soal->result_array() as $item){
+                                $list_soal .= $item['soal_id'].",";
+                                $list_opsi .= $item['soal_id'].":".$item['soal_jenis'].":N:,";
+
+
+                                array_push( $list_soal_array, $item['soal_id'] );
+                                array_push( $list_opsi_array, array($item['soal_id'],$item['soal_jenis'],'N','-') );
+                                $bisamulai++;
+
+                            }
+
+                            $list_soal = substr($list_soal, 0, -1);
+                            $list_opsi = substr($list_opsi, 0, -1);
+
+                            //$lama_min = $ujian[0]->ujian_minimal;
+
+                            $lama_max = $ujian[0]->ujian_waktu;
+                            $d = array(
+                                'soal_jawab_list' => json_encode($list_soal_array),
+                                'soal_jawab_list_opsi' => json_encode($list_opsi_array),
+
+                                'ujian_id'  => $ujianid,
+                                'siswa_id'  => $peserta_id,
+                                'user_id'   => $uid,
+                                'soal_jawab_pelajaran' => $ujian[0]->ujian_pelajaran,
+                                'soal_jawab_ruangan'  => $ruangan,
+
+                                'soal_jawab_tanggal' => date('Y-m-d'),
+                                'soal_jawab_mulai' => date('Y-m-d H:i:s'),
+                                'soal_jawab_waktu' => $ujian[0]->ujian_waktu,
+                                //'soal_jawab_waktu_minimal' => $ujian[0]->ujian_minimal,
+
+                                'soal_jawab_jumlah_soal ' => $ujian[0]->ujian_jumlah_soal,
+
+                                'soal_jawab_kelas'=>$kelas_sekarang,
+                                'soal_jawab_jurusan'=>$jurusan_id,
+                                'soal_jawab_jurusan_ke'=>$ruang,
+                                'soal_jawab_status' => 'Y'
+                            );
+                            //$data['response_soal_insert'] = $d;
+
+
+                            //$soaljawab_id = $d;
+                            if($bisamulai > 0){
+
+                                $this->db->insert('soal_jawab',$d);
+                                $soaljawab_id = $this->db->insert_id();
+
+                            }
+
+                            //jika ada tampil
                         }else{
-                            $soal = $soal->order_by('soal_id','ASC');
-                        }
+                            $soaljawab = $ujian_ikut->result();
 
-                        if(  $ujian[0]->ujian_jumlah_soal > 0 ){
-                            $soal = $soal->limit($ujian[0]->ujian_jumlah_soal);
-                        }
-
-                        $soal = $soal->get();
-
-
-                        //$data['response_soal'] = $soal->result();
-
-                        $list_soal = '';
-                        $list_opsi = '';
-
-
-                        $list_soal_array = array();
-                        $list_opsi_array = array();
-
-                        foreach($soal->result_array() as $item){
-                            $list_soal .= $item['soal_id'].",";
-                            $list_opsi .= $item['soal_id'].":".$item['soal_jenis'].":N:,";
-
-
-                            array_push( $list_soal_array, $item['soal_id'] );
-                            array_push( $list_opsi_array, array($item['soal_id'],$item['soal_jenis'],'N','-') );
                             $bisamulai++;
-
+                            $soaljawab_id = $soaljawab[0]->soal_jawab_id;
                         }
 
-                        $list_soal = substr($list_soal, 0, -1);
-                        $list_opsi = substr($list_opsi, 0, -1);
 
-                        //$lama_min = $ujian[0]->ujian_minimal;
 
-                        $lama_max = $ujian[0]->ujian_waktu;
-                        $d = array(
-                            'soal_jawab_list' => json_encode($list_soal_array),
-                            'soal_jawab_list_opsi' => json_encode($list_opsi_array),
+                        //ini respon tampil data soal
 
-                            'ujian_id'  => $ujianid,
-                            'siswa_id'  => $peserta_id,
-                            'user_id'   => $uid,
-                            'soal_jawab_pelajaran' => $ujian[0]->ujian_pelajaran,
-                            'soal_jawab_ruangan'  => $ruangan,
+                        $soal_jawab = $this->db->get_where('soal_jawab', array('soal_jawab_id'=> $soaljawab_id) )->result();
 
-                            'soal_jawab_tanggal' => date('Y-m-d'),
-                            'soal_jawab_mulai' => date('Y-m-d H:i:s'),
-                            'soal_jawab_waktu' => $ujian[0]->ujian_waktu,
-                            //'soal_jawab_waktu_minimal' => $ujian[0]->ujian_minimal,
+                        $waktu_maksimal = $soal_jawab[0]->soal_jawab_waktu;
+                        $waktu_minimal  = $this->m->getpengaturan("Waktu Minimal");
 
-                            'soal_jawab_jumlah_soal ' => $ujian[0]->ujian_jumlah_soal,
+                        $waktu_maksimal = date('Y-m-d H:i:s',strtotime("+$waktu_maksimal minutes",strtotime(date($soal_jawab[0]->soal_jawab_mulai))));
+                        $waktu_minimal = date('Y-m-d H:i:s',strtotime("+$waktu_minimal minutes",strtotime(date($soal_jawab[0]->soal_jawab_mulai))));
 
-                            'soal_jawab_kelas'=>$kelas_sekarang,
-                            'soal_jawab_jurusan'=>$jurusan_id,
-                            'soal_jawab_jurusan_ke'=>$ruang,
-                            'soal_jawab_status' => 'Y'
+
+
+                        $response["success"] = true;
+                        $response["response"] = array(
+                            "soal_jawab_id"=>$soaljawab_id,
+                            "waktu_maksimal"=> $waktu_maksimal,
+                            "waktu_minimal"=>$waktu_minimal,
+                            "bisa"=>$bisamulai,
+                            "ui"=>"nativ" //nativ/classic
                         );
-                        //$data['response_soal_insert'] = $d;
-
-
-                        //$soaljawab_id = $d;
-                        if($bisamulai > 0){
-
-                            $this->db->insert('soal_jawab',$d);
-                            $soaljawab_id = $this->db->insert_id();
-
-                        }
-
-                        //jika ada tampil
                     }else{
-                        $soaljawab = $ujian_ikut->result();
-
-                        $bisamulai++;
-                        $soaljawab_id = $soaljawab[0]->soal_jawab_id;
+                        $response["success"] = false;
+                        $response["response"] = "Tidak ditemukan data";
                     }
 
 
-
-                    //ini respon tampil data soal
-
-                    $soal_jawab = $this->db->get_where('soal_jawab', array('soal_jawab_id'=> $soaljawab_id) )->result();
-
-                    $waktu_maksimal = $soal_jawab[0]->soal_jawab_waktu;
-                    $waktu_minimal  = $this->m->getpengaturan("Waktu Minimal");
-
-                    $waktu_maksimal = date('Y-m-d H:i:s',strtotime("+$waktu_maksimal minutes",strtotime(date($soal_jawab[0]->soal_jawab_mulai))));
-                    $waktu_minimal = date('Y-m-d H:i:s',strtotime("+$waktu_minimal minutes",strtotime(date($soal_jawab[0]->soal_jawab_mulai))));
-
-
-
-                    $response["success"] = true;
-                    $response["response"] = array(
-                        "soal_jawab_id"=>$soaljawab_id,
-                        "waktu_maksimal"=> $waktu_maksimal,
-                        "waktu_minimal"=>$waktu_minimal,
-                        "bisa"=>$bisamulai,
-                        "ui"=>"nativ" //nativ/classic
-                    );
-                }else{
-                    $response["success"] = false;
-                    $response["response"] = "Tidak ditemukan data";
                 }
 
+            }catch (Exception $exception){
 
+                $response["success"] = false;
+                $response["response"] = "Gagal memproses data, error: " . $exception;
             }
         }else{
             $response["success"] = false;
@@ -1118,7 +1127,7 @@ class Apiv5 extends CI_Controller
         $tanggal_sekarang = date('Y-m-d H:i:s');
         $tanggal_sekarang_ditambah = date('Y-m-d H:i:s',strtotime("+$lama minutes",strtotime($tanggal_sekarang)));
 
-        $token_baru = $this->_generateRandomString(3);
+        $token_baru = $this->_generateRandomString(4);
 
         $xtanggal_sekarang = strtotime($tanggal_sekarang) * 1000;
         $xtgl_buka = strtotime($tgl_buka) * 1000;
@@ -1148,8 +1157,9 @@ class Apiv5 extends CI_Controller
 
         }
     }
-    function _generateRandomString($length = 3) {
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function _generateRandomString($length = 4) {
+        //$characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $characters = '0123456789';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
