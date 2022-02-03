@@ -2,20 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a58b7b8-52a5-494e-a004-22d3b70fd46a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/usbka-serverv3-restapi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/usbka-serverv3-restapi.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/Apiv3.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/Apiv3.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/Apiv5.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/Apiv5.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/database.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/routes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/routes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/Cari.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/Cari.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/Pengumuman.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/Pengumuman.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/timeline.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/timeline.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/config/database.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/Download.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/Download.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/Export.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/Export.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/admin/Peserta.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/admin/Peserta.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/admin/Ujian.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/controllers/admin/Ujian.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/dashboard.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/dashboard.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/peserta.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/peserta.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/soal.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/soal.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/ujian.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/views/admin/ujian.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/views/guru/soal.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/views/guru/soal.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/views/home.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/views/home.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../usbka-serverv4/application/views/template.php" beforeDir="false" afterPath="$PROJECT_DIR$/../usbka-serverv4/application/views/template.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,13 +45,13 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/application/controllers" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/application/views" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\www\usbka-serverv4-restapi\application\views" />
       <recent name="C:\www\usbka-serverv4-restapi\application\controllers" />
       <recent name="C:\www\usbka-serverv4-restapi\application\views\apiv4" />
-      <recent name="C:\www\usbka-serverv4-restapi\application\views" />
     </key>
   </component>
   <component name="ServiceViewManager">
@@ -185,6 +190,25 @@
       <workItem from="1638841272828" duration="3187000" />
       <workItem from="1638862564965" duration="1188000" />
       <workItem from="1638976021020" duration="202000" />
+      <workItem from="1639231950284" duration="728000" />
+      <workItem from="1639484390281" duration="4088000" />
+      <workItem from="1639570682913" duration="1278000" />
+      <workItem from="1639970335748" duration="609000" />
+      <workItem from="1639972072624" duration="1216000" />
+      <workItem from="1640067787628" duration="779000" />
+      <workItem from="1642142838055" duration="1229000" />
+      <workItem from="1642163473806" duration="1729000" />
+      <workItem from="1642237156556" duration="1797000" />
+      <workItem from="1642950841301" duration="5299000" />
+      <workItem from="1643099226703" duration="2924000" />
+      <workItem from="1643191681475" duration="597000" />
+      <workItem from="1643282453549" duration="1109000" />
+      <workItem from="1643295687241" duration="4474000" />
+      <workItem from="1643356378903" duration="6892000" />
+      <workItem from="1643438900377" duration="9564000" />
+      <workItem from="1643513567984" duration="6212000" />
+      <workItem from="1643610751606" duration="3369000" />
+      <workItem from="1643632828850" duration="3133000" />
     </task>
     <servers />
   </component>
@@ -192,10 +216,10 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1634542243963">
+    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1639971934919">
       <screen x="0" y="0" width="1366" height="720" />
     </state>
-    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.720@0.0.1366.720" timestamp="1634542243963" />
+    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.720@0.0.1366.720" timestamp="1639971934919" />
     <state x="463" y="120" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1633528903906" />
     <state x="435" y="175" key="NewPhpClassDialog" timestamp="1637377789040">
       <screen x="0" y="0" width="1366" height="720" />

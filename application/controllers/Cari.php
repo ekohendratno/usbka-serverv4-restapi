@@ -62,11 +62,10 @@ class Cari extends CI_Controller
                 $item['peserta_nama'] = $r2['peserta_nama'];
                 $peserta_foto = $r2['peserta_foto'];
 
-                $item['peserta_foto'] = $this->config->item('base_url_cbt') . '/assets/img/avatar.png';
-                if( !empty($peserta_foto) && file_exists(FCPATH . 'uploads/peserta/' .$peserta_foto) ) {
-                    $item['peserta_foto'] = $this->config->item('base_url_cbt') . '/thumb.php?size=200x300&src=./uploads/peserta/' . $peserta_foto;
+                $item['peserta_foto'] = $this->config->item('base_url') . '/assets/img/avatar.png';
+                if( !empty($peserta_foto) && file_exists(FCPATH . 'assets/profile/' .$peserta_foto) ) {
+                    $item['peserta_foto'] = $this->config->item('base_url') . '/assets/profile/' . $peserta_foto;
                 }
-
 
                 $item['soal_jawab_id'] = $r2['soal_jawab_id'];
                 $item['soal_jawab_mulai'] = $r2['soal_jawab_mulai'];
