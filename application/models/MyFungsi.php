@@ -3,6 +3,16 @@ defined('BASEPATH') or exit();
 
 class MyFungsi extends CI_Model{
 
+    function tahunajaran(){
+        $this->db->select('*')->from('ta');
+        $this->db->where('ta_aktif', 1);
+        $this->db->order_by('ta_tahun', 'desc');
+
+        $pengaturan = $this->db->get()->result();
+
+        return $pengaturan[0]->ta_tahun.'-'.$pengaturan[0]->ta_semester;
+    }
+
 
     function getpengaturan($pengaturan_name){
 

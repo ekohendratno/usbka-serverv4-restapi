@@ -10,6 +10,8 @@ class Cari extends CI_Controller
         $this->load->helpers('form');
         $this->load->helpers('url');
 
+        $this->tahunajaran = $this->m->tahunajaran();
+
     }
 
     function index(){
@@ -24,17 +26,9 @@ class Cari extends CI_Controller
         $this->db->join('peserta', 'peserta.peserta_id = soal_jawab.siswa_id');
 
 
-
-        //if(!empty($nomor) && empty($by)){
-
-        //$this->db->where('soal_jawab.soal_jawab_ruangan',$nomor);
-        //jika waktu selesai lebih dari 600 detik atau 30 menit
-        //$this->db->where('soal_jawab.soal_jawab_last_update >= ', date('Y-m-d H:i', strtotime("-1800 second"))); //30menit = 1800 detik
-        //}
-
-
         $this->db->where('soal_jawab.soal_jawab_last_update >= ', date('Y-m-d H:i:s', strtotime("-1800 second")));
 
+        $this->db->where('soal_jawab.soal_jawab_tahunajaran', $this->tahunajaran);
         $this->db->where('soal_jawab.soal_jawab_ruangan', $nomor);
         $this->db->where('soal_jawab.soal_jawab_tanggal', $tgl);
 
