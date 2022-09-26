@@ -27,7 +27,7 @@ date_default_timezone_set('Asia/Jakarta');
 */
 
 //$this->config->item('base_url');
-$config['base_url'] = 'http://192.168.10.254/usbka-serverv4-restapi';
+$config['base_url'] = 'http://192.168.10.254//usbka-serverv4-restapi';
 $config['base_url_cbt'] = 'http://192.168.10.254/usbka-serverv4';
 $config['code'] = 65;
 $config['codename'] = 'v2.65';

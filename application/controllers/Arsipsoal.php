@@ -11,6 +11,8 @@ class Arsipsoal extends CI_Controller
         $this->load->helpers('url');
 
     }
+
+
     function index(){
 
         $t = $this->input->get('t');
@@ -23,14 +25,26 @@ class Arsipsoal extends CI_Controller
         $this->db->group_by('soal_pelajaran');
         $this->db->group_by('soal_kelas');
         $this->db->group_by('soal_guru');
-
         $this->db->order_by('soal_pelajaran','asc');
+        $this->db->group_by('soal_untuk');
 
         $response = array();
         $response["success"] = false;
         $response["response"] = array();
 
+
+        $tt = explode("-", $t); // 2021/2022-Genap
+        $tt1 = $tt[0]; // tahun
+        $tt2 = $tt[1]; // semester
+
+
         foreach ($this->db->get()->result_array() as $row){
+
+            $tampilkan = "";
+            $this->db->select('*')->from('ta')->where("ta_aktif",1)->where("ta_tahun",$tt1)->where("ta_semester",$tt2);
+            foreach ($this->db->get()->result() as $ta){
+                $tampilkan = $ta->ta_arsip_kecuali;
+            }
 
             $baris = array();
             $baris['soal_kelas']     = $row['soal_kelas'];
@@ -39,8 +53,14 @@ class Arsipsoal extends CI_Controller
             $baris['soal_untuk']     = $row['soal_untuk'];
             $baris['soal_tahunajaran']     = $row['soal_tahunajaran'];
 
-            array_push($response["response"], $baris);
-            $response["success"] = true;
+            if( $row['soal_untuk'] != $tampilkan ){
+
+
+                $response["success"] = true;
+                array_push($response["response"], $baris);
+            }
+
+
         }
 
         $this->output->set_header('Access-Control-Allow-Origin: *');

@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/usbka-serverv3-restapi.iml" filepath="$PROJECT_DIR$/.idea/usbka-serverv3-restapi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../usbka-serverv4/.idea/usbka-serverv4.iml" filepath="$PROJECT_DIR$/../usbka-serverv4/.idea/usbka-serverv4.iml" />
     </modules>
   </component>
 </project>
