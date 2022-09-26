@@ -16,13 +16,11 @@ class Promosi extends CI_Controller
         $response["success"] = true;
         $response["response"] = array();
 
-        $nomor = rand(1,4);
-
         $response["response"] = array(
             "title" => "",
             "title_desc" => "",
             "link" => "",
-            "image" => base_url() . "assets/img/promosi/promo".$nomor.".png"
+            "image" => base_url() . "assets/img/promosi/promo1.png"
         );
 
         $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');

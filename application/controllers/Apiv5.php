@@ -1,7 +1,7 @@
 <?php
 
 
-class Apiv6 extends CI_Controller
+class Apiv5 extends CI_Controller
 {
 
     function __construct()
@@ -14,21 +14,16 @@ class Apiv6 extends CI_Controller
 
         $this->_cronJob();
 
-
-        $this->tahunajaran = $this->m->tahunajaran();
-
     }
 
     function index()
     {
         $data = array();
-        $data['message'] = 'Selamat datang di CBT API v6';
+        $data['message'] = 'Selamat datang di API v5';
         $data['response'] = 'Parameter Failed!';
         $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
         echo json_encode($data);
     }
-
-
 
     function update(){
 
@@ -37,44 +32,33 @@ class Apiv6 extends CI_Controller
         $response["success"] = false;
         $response["response"] = array();
 
-        $version = $this->db->select('*')->from('version')->order_by('version_nomor','desc')->limit(1)->get();
+        $version = $this->db->select('*')->from('version')->order_by('version_tanggal','desc')->limit(1)->get();
         foreach ($version->result() as $v){
+            //$hits = $v->version_hits;
+
+            //$this->db->where("version_nomor",$v->version_nomor);
+            //$this->db->update("version",array("version_hits" => ($hits+1) ));
+
+
+
             $response["success"] = true;
             $response["response"] = array(
                 "wajib" => $v->version_wajib,
                 "ukuran" => $v->version_ukuran,
                 "pesan" => "Ditemukan versi terbaru ".$v->version_nama.", silahkan luangkan waktu untuk memperbarui aplikasi!\n\n".$v->version_text,
                 "name" => $v->version_nama,
-                "code" => (int) $v->version_nomor,
-                "code_minimal" => (int) $v->version_nomor_minimal,
+                "code" => $v->version_nomor,
+                //"link" => $this->config->item('base_url') . '/download/android'
                 "link" => $this->config->item('base_url') . '/assets/update/cbt'.$v->version_nomor.'.apk'
+                //"link" => $this->config->item('base_url_cbt') . '/uploads/cbt'.$v->version_nomor.'.apk'
 
             );
+            //redirect('uploads/cbt'.$v->version_nomor.'.apk');
         }
 
         $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
         echo json_encode($response);
 
-    }
-
-    function sendupdate(){
-        $code = $this->input->get('code');
-
-        $response = array();
-        $response["success"] = false;
-        $response["response"] = array();
-
-        $version = $this->db->select('*')->from('version')->where('version_nomor',$code)->get();
-
-        foreach ($version->result() as $v){
-            $hits = $v->version_hits;
-
-            $this->db->where("version_nomor",$v->version_nomor);
-            $this->db->update("version",array("version_hits" => ($hits+1) ));
-        }
-
-        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
-        echo json_encode($response);
     }
 
 
@@ -84,84 +68,49 @@ class Apiv6 extends CI_Controller
         $password = $this->input->get('p');
 
         $response = array();
-        $response["ftp_server"] = "";
-        $response["ftp_port"] = 0;
-        $response["ftp_username"] = "";
-        $response["ftp_password"] = "";
-        $response["ftp_path"] = "";
-        $response["uploadVideosAll"] = "0";
-        $response["success"] = false;
-        $response["response"] = "";
-
-
-
-        $tanggal_sekarang = date('Y-m-d H:i:s');
-
         if(empty($username) || empty($password)){
             $response["success"] = false;
             $response["response"] = "Username atau Password kosong!";
         }else{
 
-            $peserta1 = $this->db->get_where('peserta',array(
-                'peserta_username'=>$username,
-                'peserta_password'=>$password
-            ));
+            $peserta = $this->db->get_where('peserta',array('peserta_username'=>$username,'peserta_password'=>$password))->row_array();
+            if ( !empty($peserta)  ) { //&& $peserta['peserta_lock'] < 1
 
+                $userdata = array();
+                $userdata['uid']        = $peserta['peserta_id'];
+                $userdata['nama']       = $peserta['peserta_nama'];
 
-            if($peserta1->num_rows() > 0) {
-
-                foreach ($peserta1->result_array() as $peserta) {
-
-                    $userdata = array();
-                    $userdata['uid'] = $peserta['peserta_id'];
-                    $userdata['nama'] = $peserta['peserta_nama'];
-
-                    $userdata['foto'] = "";
-                    if (!empty($peserta['peserta_foto']) && file_exists(FCPATH . 'assets/profile/' . $peserta['peserta_foto'])) {
-                        $userdata['foto'] = $this->config->item('base_url') . '/assets/profile/' . $peserta['peserta_foto'];
-                    }
-
-                    $userdata['level'] = "peserta";
-                    $userdata['jk'] = $peserta['peserta_jk'];
-                    $userdata['nis'] = $peserta['peserta_nis'];
-                    $userdata['nomor'] = $peserta['peserta_nomor'];
-                    $userdata['agama'] = ucfirst($peserta['peserta_agama']);
-                    $userdata['kelas'] = $peserta['peserta_kelas'];
-                    $userdata['jurusan'] = $peserta['peserta_jurusan'];
-                    $userdata['jurusan_ke'] = $peserta['peserta_jurusan_ke'];
-
-                    $response["success"] = true;
-                    $response["response"] = $userdata;
-
-                    $ruangan = $this->input->get('r');
-                    if (!empty($ruangan) && $ruangan > 0) {
-
-
-                        $peserta_last_sesi_update = date("Y-m-d H:i:s", strtotime('+24 hours', strtotime($tanggal_sekarang)));
-
-
-                        $this->db->where(array("peserta_id" => $peserta['peserta_id']));
-                        $this->db->update("peserta", array(
-                            "peserta_ruangan" => $ruangan,
-                            "peserta_last_sesi" => $peserta_last_sesi_update
-                        ));
-                    }
+                $userdata['foto'] = $this->config->item('base_url') . '/assets/img/avatar.png';
+                if( !empty($peserta['peserta_foto']) && file_exists(FCPATH . 'uploads/peserta/' .$peserta['peserta_foto']) ) {
+                    $userdata['foto'] = $this->config->item('base_url') . '/thumb.php?size=200x300&src=./uploads/peserta/' . $peserta['peserta_foto'];
                 }
+
+                $userdata['level']      = "peserta";
+                $userdata['jk']         = $peserta['peserta_jk'];
+                $userdata['nis']  		= $peserta['peserta_nis'];
+                $userdata['agama']  	= ucfirst($peserta['peserta_agama']);
+                $userdata['kelas']  	= $peserta['peserta_kelas'];
+                $userdata['jurusan']  	= $peserta['peserta_jurusan'];
+                $userdata['jurusan_ke'] = $peserta['peserta_jurusan_ke'];
+
+
+                $response["success"] = true;
+                $response["response"] = $userdata;
+
+                $ruangan = $this->input->get('r');
+                $this->db->where( array("peserta_id" => $peserta['peserta_id']) );
+                $this->db->update("peserta", array("peserta_ruangan" => $ruangan));
 
             }else{
 
-                $users = $this->db->get_where('users',array(
-                    'username'=>$username,
-                    'password'=>$password
-                ))->row_array();
+                $users = $this->db->get_where('users',array('username'=>$username,'password'=>$password))->row_array();
 
                 if ( !empty($users) && $users['level'] == 'pengawas' ) {
 
                     $userdata = array();
                     $userdata['uid']    = $users['user_id'];
                     $userdata['nama']       = $users['username'];
-                    $userdata['nomor']  	= "";
-                    $userdata['foto']       = "";
+                    $userdata['foto']       = base_url('assets/images/avatar.png');
                     $userdata['level']      = "pengawas";
 
                     $response["success"] = true;
@@ -182,138 +131,20 @@ class Apiv6 extends CI_Controller
 
 
 
-        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
-        echo json_encode($response,JSON_UNESCAPED_UNICODE);
-
-    }
-
-
-    function signin_cek(){
-        $username = $this->input->get('u');
-        $password = $this->input->get('p');
-
-        $response = array();
         $response["ftp_server"] = "";
         $response["ftp_port"] = 0;
         $response["ftp_username"] = "";
         $response["ftp_password"] = "";
         $response["ftp_path"] = "";
-        $response["uploadVideosAll"] = "0";
-        $response["success"] = false;
-        $response["response"] = "";
-
-
-
-        $tanggal_sekarang = date('Y-m-d H:i:s');
-
-        if(empty($username) || empty($password)){
-            $response["success"] = false;
-            $response["response"] = "Username atau Password kosong!";
-        }else{
-
-            $peserta1 = $this->db->get_where('peserta',array(
-                'peserta_username'=>$username,
-                'peserta_password'=>$password
-            ));
-
-
-            if($peserta1->num_rows() > 0) {
-
-                foreach ($peserta1->result_array() as $peserta) {
-
-                    $userdata = array();
-                    $userdata['uid'] = $peserta['peserta_id'];
-
-                    $userdata['foto'] = "";
-                    if (!empty($peserta['peserta_foto']) && file_exists(FCPATH . 'assets/profile/' . $peserta['peserta_foto'])) {
-                        $userdata['foto'] = $this->config->item('base_url') . '/assets/profile/' . $peserta['peserta_foto'];
-                    }
-
-                    $peserta_last_sesi = $peserta['peserta_last_sesi'];
-
-                    $userdata['peserta_last_sesi'] = $peserta_last_sesi;
-
-
-                    $peserta_last_sesi_tmp = date("Y-m-d H:i:s", strtotime($peserta_last_sesi));
-                    $peserta_last_sesi_update = date("Y-m-d H:i:s", strtotime('+24 hours', strtotime($tanggal_sekarang)));
-
-                    $ruangan = $this->input->get('r');
-                    $du = array(
-                        "peserta_ruangan" => $ruangan,
-                        "peserta_last_sesi" => $peserta_last_sesi_update
-                    );
-
-                    if ($tanggal_sekarang > $peserta_last_sesi_tmp) {
-
-
-                        $du = array(
-                            "peserta_last_sesi" => $peserta_last_sesi_update
-                        );
-
-                        $response["success"] = false;
-                        $response["response"] = "Sesi login berakhir pada " . $peserta_last_sesi . " , silahkan login kembali";
-
-                    } else {
-
-                        $response["success"] = true;
-                        $response["response"] = $userdata;
-                    }
-
-                    if (!empty($ruangan) && $ruangan > 0) {
-                        $this->db->where(array("peserta_id" => $peserta['peserta_id']));
-                        $this->db->update("peserta", $du);
-                    }
-                }
-
-            }else{
-
-                $users = $this->db->get_where('users',array(
-                    'username'=>$username,
-                    'password'=>$password
-                ))->row_array();
-
-                if ( !empty($users) && $users['level'] == 'pengawas' ) {
-
-                    $userdata = array();
-                    $userdata['uid']    = $users['user_id'];
-                    $userdata['nama']       = $users['username'];
-                    $userdata['nomor']  	= "";
-                    $userdata['foto']       = "";
-                    $userdata['level']      = "pengawas";
-
-                    $response["success"] = true;
-                    $response["response"] = $userdata;
-
-                }else{
-                    $response["success"] = false;
-                    $response["response"] = "Username atau Password tidak sesuai!";
-
-                }
-
-            }
-
-
-
-
-        }
-
-
 
         $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
         echo json_encode($response,JSON_UNESCAPED_UNICODE);
 
     }
 
-
-    function dashboard_peserta(){
+    function dashboard(){
 
         $uid     = $this->input->get('uid');
-        $ruangan    = $this->input->get('ruangan');
-        $tgl = date('Y-m-d');
-
-        $datetime = new DateTime($tgl);
-        $datetime->modify('-1 day');
-        $tgl_kemarin = $datetime->format('Y-m-d');
 
         $response = array();
         $response["response"] = array();
@@ -343,62 +174,8 @@ class Apiv6 extends CI_Controller
                 $item["jumlah_peserta"] = $this->_jumlah_peserta();
                 $item["jumlah_jurusan"] = $this->_jumlah_jurusan();
                 $item["jumlah_ujian_today"] = (int)$this->_jumlah_ujian_today($kelas_sekarang,$jurusan_id,$peserta_agama);
-                $item["jumlah_pesan"] = $this->_jumlah_pesan("peserta");
-                $item["jumlah_peserta_ruangan"] = $this->_jumlah_peserta_ruangan($tgl, $ruangan);
-
                 $item["instansi"] = $this->m->getpengaturan("instansi");
                 $item["sesi"] = $this->m->getpengaturan("Sesi");
-                $item["tahunajaran"] = $this->tahunajaran;
-
-
-                $_jumlah_jawab_by_today = $this->_jumlah_jawab_by($uid, $tgl, $ruangan,$kelas_sekarang,$jurusan_id);
-                $_jumlah_ujian_by_today = $this->_jumlah_ujian_by($uid, $tgl, $kelas_sekarang,$jurusan_id);
-
-                $overview_today = $_jumlah_jawab_by_today."/".$_jumlah_ujian_by_today;
-
-                $overview_today_precent = 0;
-                if( $_jumlah_jawab_by_today > 0 && $_jumlah_ujian_by_today > 0) {
-                    $overview_today_precent = round(($_jumlah_jawab_by_today / $_jumlah_ujian_by_today) * 100 );
-                }
-
-                $item["overview_today"] = array(
-                    "persentase" => $overview_today_precent,
-                    "text" => $overview_today
-                );
-
-
-                $_jumlah_jawab_by_tommorrow = $this->_jumlah_jawab_by($uid, $tgl_kemarin, $ruangan,$kelas_sekarang,$jurusan_id);
-                $_jumlah_ujian_by_tommorrow = $this->_jumlah_ujian_by($uid, $tgl_kemarin, $kelas_sekarang,$jurusan_id);
-
-                $overview_tommorrow = $_jumlah_jawab_by_tommorrow."/".$_jumlah_ujian_by_tommorrow;
-
-                $overview_tommorrow_precent = 0;
-                if( $_jumlah_jawab_by_tommorrow > 0 && $_jumlah_ujian_by_tommorrow > 0){
-                    $overview_tommorrow_precent =  round( ($_jumlah_jawab_by_tommorrow/$_jumlah_ujian_by_tommorrow)*100 );
-                }
-
-                $item["overview_tommorrow"] = array(
-                    "persentase" => $overview_tommorrow_precent,
-                    "text" => $overview_tommorrow
-                );
-
-
-
-
-                $_jumlah_jawab_by_all = $this->_jumlah_jawab_by($uid, "", $ruangan,$kelas_sekarang,$jurusan_id);
-                $_jumlah_ujian_by_all = $this->_jumlah_ujian_by($uid, "", $kelas_sekarang,$jurusan_id);
-
-                $overview_all = $_jumlah_jawab_by_all."/".$_jumlah_ujian_by_all;
-
-                $overview_all_precent = 0;
-                if( $_jumlah_jawab_by_all > 0 && $_jumlah_ujian_by_all > 0){
-                    $overview_all_precent =  round( ($_jumlah_jawab_by_all/$_jumlah_ujian_by_all)*100 );
-                }
-
-                $item["overview_all"] = array(
-                    "persentase" => $overview_all_precent,
-                    "text" => $overview_all
-                );
 
                 $response["response"] = $item;
 
@@ -414,43 +191,6 @@ class Apiv6 extends CI_Controller
         echo json_encode($response,JSON_UNESCAPED_UNICODE);
     }
 
-
-    function dashboard_pengawas(){
-
-        $ruangan    = $this->input->get('ruangan');
-
-        $response = array();
-        $response["success"] = true;
-        $response["response"] = array();
-
-        $tgl = date('Y-m-d');
-
-        //date('Y-m-d', strtotime($tgl. ' + 1 days'));
-
-        $soal_jawab1 = $this->db->group_by('siswa_id')->get_where('soal_jawab',array(
-            "soal_jawab_tahunajaran" => $this->tahunajaran,
-            "soal_jawab_tanggal" => $tgl
-        ));
-        $soal_jawab2 = $this->db->group_by('siswa_id')->get_where('soal_jawab',array(
-            "soal_jawab_tahunajaran" => $this->tahunajaran,
-            "soal_jawab_tanggal" => $tgl,
-            "soal_jawab_ruangan" => $ruangan
-        ));
-        $ujian = $this->db->group_by("ujian_pelajaran")->get_where('ujian',array(
-            "ujian_tahunajaran" => $this->tahunajaran,
-            "ujian_tanggal" => $tgl
-        ));
-
-        $response["response"] = array(
-            "peserta_total" => $soal_jawab1->num_rows(),
-            "peserta_ruangan" => $soal_jawab2->num_rows(),
-            "pelajaran_hariini" => $ujian->num_rows(),
-            "jumlah_pesan" => $this->_jumlah_pesan("pengawas")
-        );
-
-        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
-        echo json_encode($response,JSON_UNESCAPED_UNICODE);
-    }
 
     /**
      * @return mixed
@@ -487,11 +227,6 @@ class Apiv6 extends CI_Controller
                     $ujian = $this->db->select('soal_jawab.*,ujian.*')->from('soal_jawab');
                     $ujian = $ujian->join("ujian","ujian.ujian_id = soal_jawab.ujian_id");
                     $ujian = $ujian->where('soal_jawab.siswa_id='.$peserta_id);
-
-                    $ujian = $ujian->where('soal_jawab.soal_jawab_tahunajaran=', $this->tahunajaran);
-                    $ujian = $ujian->where('ujian.ujian_tahunajaran=', $this->tahunajaran);
-
-
 
                     $ujian = $ujian->where('(ujian.ujian_kelas=\'\' OR ujian.ujian_kelas=\''.$peserta_kelas.'\')');
                     //$ujian = $ujian->where('(soal_jawab.soal_jawab_kelas=\'\' OR soal_jawab.soal_jawab_kelas=\''.$peserta_kelas.'\')');
@@ -567,13 +302,11 @@ class Apiv6 extends CI_Controller
                         $ujian = $ujian->where('ujian.ujian_tanggal' ,$tgl);
                     }
 
-                    $ujian = $ujian->where('ujian_tahunajaran', $this->tahunajaran);
-
                     $ujian = $ujian->where('(ujian.ujian_kelas=\'\' OR ujian.ujian_kelas=\''.$peserta_kelas.'\')');
                     //$ujian = $ujian->where('ujian.ujian_jurusan',"")->or_where('ujian.ujian_jurusan LIKE \'%'.$peserta_jurusan.'%\'');
                     //$ujian = $ujian->where('ujian.ujian_agama',"")->or_where('ujian.ujian_agama LIKE \'%'.$peserta_agama.'%\'');
 
-                    $ujian = $ujian->order_by('ujian_mulai' ,"DESC");
+                    $ujian = $ujian->order_by('ujian_mulai' ,"ASC");
 
                     $ujian = $ujian->get();
                     foreach ($ujian->result_array() as $row1){
@@ -618,12 +351,7 @@ class Apiv6 extends CI_Controller
                             //$soal_jawab = $this->db->get_where('soal_jawab',array('ujian_id'=>$row1['ujian_id'],'peserta_id'=>$peserta_id))->result();
                             //$data_ujian['status'] = empty($soal_jawab[0]->status) ? null : $soal_jawab[0]->status;
 
-                            $soal_jawab = $this->db->get_where('soal_jawab', array(
-                                'soal_jawab_tahunajaran' => $this->tahunajaran,
-                                'ujian_id' => $row1['ujian_id'],
-                                'siswa_id' => $peserta_id
-                            ))->result();
-
+                            $soal_jawab = $this->db->get_where('soal_jawab', array('ujian_id' => $row1['ujian_id'], 'siswa_id' => $peserta_id))->result();
 
                             //$tanggal_sekarang = new DateTime();
                             //$tanggal_sekarang_ujian_mulai = new DateTime($ujian_tanggal . " " . $data_ujian['ujian_mulai']);
@@ -703,10 +431,7 @@ class Apiv6 extends CI_Controller
 
 
                     //MULAI GET UJIAN
-                    $q1 = $this->db->get_where('ujian',array(
-                        'ujian_id'=>$ujianid,
-                        'ujian_tahunajaran'=>$this->tahunajaran
-                    ));
+                    $q1 = $this->db->get_where('ujian',array('ujian_id'=>$ujianid));
 
                     if($q1->num_rows() > 0){
                         $ujian = $q1->result();
@@ -722,7 +447,6 @@ class Apiv6 extends CI_Controller
                         $ujian_ikut = $ujian_ikut->where(array(
                             'ujian_id'=>$ujianid,
                             'siswa_id'=>$peserta_id,
-                            'soal_jawab_tahunajaran'=>$this->tahunajaran,
                             'soal_jawab_pelajaran' => $ujian[0]->ujian_pelajaran
                         ));
 
@@ -736,11 +460,9 @@ class Apiv6 extends CI_Controller
                         if($ujian_ikut->num_rows() < 1){
 
                             $soal = $this->db->select('*')->from('soal')->where(array(
-                                'soal_tahunajaran'=>$this->tahunajaran,
                                 'soal_kelas'=> $ujian[0]->ujian_kelas,
                                 'soal_guru' => $ujian[0]->ujian_guru,
-                                'soal_pelajaran' => $ujian[0]->ujian_pelajaran,
-                                'soal_untuk' => $ujian[0]->ujian_untuk
+                                'soal_pelajaran' => $ujian[0]->ujian_pelajaran
                             ));
 
 
@@ -791,11 +513,8 @@ class Apiv6 extends CI_Controller
 
                             $lama_max = $ujian[0]->ujian_waktu;
                             $d = array(
-
-                                'soal_jawab_tahunajaran'=>$this->tahunajaran,
-
                                 'soal_jawab_list' => json_encode($list_soal_array),
-                                //'soal_jawab_list_opsi' => json_encode($list_opsi_array),
+                                'soal_jawab_list_opsi' => json_encode($list_opsi_array),
 
                                 'ujian_id'  => $ujianid,
                                 'siswa_id'  => $peserta_id,
@@ -838,10 +557,7 @@ class Apiv6 extends CI_Controller
 
                         //ini respon tampil data soal
 
-                        $soal_jawab = $this->db->get_where('soal_jawab', array(
-                            'soal_jawab_tahunajaran'=>$this->tahunajaran,
-                            'soal_jawab_id'=> $soaljawab_id
-                        ) )->result();
+                        $soal_jawab = $this->db->get_where('soal_jawab', array('soal_jawab_id'=> $soaljawab_id) )->result();
 
                         $waktu_maksimal = $soal_jawab[0]->soal_jawab_waktu;
                         $waktu_minimal  = $this->m->getpengaturan("Waktu Minimal");
@@ -853,12 +569,11 @@ class Apiv6 extends CI_Controller
 
                         $response["success"] = true;
                         $response["response"] = array(
-                            "soal_jawab_id"=> $soaljawab_id,
+                            "soal_jawab_id"=>$soaljawab_id,
                             "waktu_maksimal"=> $waktu_maksimal,
-                            "waktu_minimal"=> $waktu_minimal,
-                            "bisa"=> $bisamulai,
-                            "keamanan"=> "on",
-                            "ui"=> "nativ" //nativ/classic
+                            "waktu_minimal"=>$waktu_minimal,
+                            "bisa"=>$bisamulai,
+                            "ui"=>"nativ" //nativ/classic
                         );
                     }else{
                         $response["success"] = false;
@@ -881,6 +596,7 @@ class Apiv6 extends CI_Controller
         $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response);
+        //echo json_encode($response,JSON_UNESCAPED_UNICODE);
     }
 
     function ujianmulai(){
@@ -891,25 +607,16 @@ class Apiv6 extends CI_Controller
         $response["response"] = array();
 
         $id     = $this->input->get('id');
-        $soal_jawab = $this->db->get_where('soal_jawab', array(
-            'soal_jawab_tahunajaran'=>$this->tahunajaran,
-            'soal_jawab_id'=> $id
-        ) )->result();
+        $soal_jawab = $this->db->get_where('soal_jawab', array('soal_jawab_id'=> $id) )->result();
         $urut_soal = json_decode( $soal_jawab[0]->soal_jawab_list );
 
 
         $urutan = 1;
         foreach($urut_soal as $item_urut_soal){
-            $ambil_soal = $this->db->get_where('soal',array(
-                'soal_tahunajaran'=>$this->tahunajaran,
-                'soal_id'=> $item_urut_soal
-            ) )->result_array();
+            $ambil_soal = $this->db->get_where('soal',array( 'soal_id'=> $item_urut_soal) )->result_array();
             foreach ($ambil_soal as $row1){
 
-                $ambil_soal_parent = $this->db->get_where('soal_parent',array(
-                    'soal_parent_tahunajaran'=>$this->tahunajaran,
-                    'soal_parent_id'=> $row1["soal_parent_id"]
-                ) )->result_array();
+                $ambil_soal_parent = $this->db->get_where('soal_parent',array( 'soal_parent_id'=> $row1["soal_parent_id"]) )->result_array();
 
                 $soal_text_parent = "<div id='soal_parent'>";
                 foreach ($ambil_soal_parent as $row2){
@@ -922,13 +629,11 @@ class Apiv6 extends CI_Controller
                 $item["soal_urutan"] = $urutan;
                 $item["soal_id"] = $row1["soal_id"];
                 $item["soal_jenis"] = $row1["soal_jenis"];
-                $item["soal_text"] = $this->_philsXMLClean( $this->_strip($row1["soal_text"]) );
-
                 //$item["soal_text"] = $this->_philsXMLClean( $row1["soal_text"] );
+                $item["soal_text"] = $this->_philsXMLClean( $this->_strip($row1["soal_text"]) );
+                $item["soal_text_parent"] = $this->_philsXMLClean( $this->_strip($soal_text_parent) );
                 //$item["soal_text"] = mb_convert_encoding($row1["soal_text"], 'HTML-ENTITIES', 'UTF-8');
                 //$item["soal_text_deskripsi"] =$this->_philsXMLClean( $row1["soal_text_deskripsi"] );
-
-                $item["soal_text_parent"] = $this->_philsXMLClean( $this->_strip($soal_text_parent) );
                 $item["soal_text_deskripsi"] = $this->_philsXMLClean( $this->_strip($row1["soal_text_deskripsi"]) );
                 $item["soal_text_jawab"] = array();
                 $item["soal_date"] = $row1["soal_date"];
@@ -958,17 +663,14 @@ class Apiv6 extends CI_Controller
         echo json_encode($response);
     }
 
-
     function ujianselesai(){
+
         $response = array();
         $response["success"] = false;
         $response["response"] = array();
         $id     = $this->input->get('id');
         $data   = $this->input->post('data');
         $data2  = explode(",",$data);
-
-        //$response["data"] = $data;
-        //$response["data2"] = $data2;
 
         $aa = array();
         $aa["a"] = array();
@@ -990,209 +692,21 @@ class Apiv6 extends CI_Controller
         }
 
 
-/**
-        $ss1 = $this->db->get_where('soal_jawab',array(
-            'soal_jawab_tahunajaran'=>$this->tahunajaran,
-            'soal_jawab_id'=> $id
-        ));
-
-
-
-        if($ss1->num_rows() <= 0) {
-            $this->db->insert('soal_jawab',array(
-                'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
-                'soal_jawab_list_opsi'      => json_encode($update_),
-                'soal_jawab_status'         => 'N'
-            ));
-            $id = $this->db->insert_id();
-        }*/
-
         //simpan dulu data peserta
 
         $this->db->where(array(
-            'soal_jawab_tahunajaran'=>$this->tahunajaran,
-            'soal_jawab_id'   => $id
-        ));
-
-        if(sizeof($update_) > 0){
-
-
-            $this->db->update('soal_jawab', array(
-                'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
-                'soal_jawab_list_opsi'      => json_encode($update_),
-                'soal_jawab_status'         => 'N'
-            ));
-
-        }else{
-            $this->db->update('soal_jawab', array(
-                'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
-                'soal_jawab_status'         => 'N'
-            ));
-
-        }
-
-
-        //hitung jawaban peserta
-
-        $soal_jawab = $this->db->get_where('soal_jawab',array(
-            'soal_jawab_tahunajaran'=>$this->tahunajaran,
-            'soal_jawab_id'=> $id
-        ))->result();
-
-
-
-        foreach ($soal_jawab as $x) {
-
-            $soal_jawab_list_opsi = json_decode($x->soal_jawab_list_opsi);
-            $jumlah_soal = $x->soal_jawab_jumlah_soal;
-            $jumlah_benar = 0;
-            $jumlah_salah = 0;
-            $jumlah_terjawab = 0;
-            $jumlah_tidakterjawab = 0;
-            $nilai = 0;
-
-            foreach ((array) $soal_jawab_list_opsi as $soal_jawab_list_opsi_item) {
-                $id_soal = $soal_jawab_list_opsi_item[0];
-                $jenis = $soal_jawab_list_opsi_item[1];
-                $ragu = $soal_jawab_list_opsi_item[2];
-                $jawaban    = $soal_jawab_list_opsi_item[3]; //0-4
-
-                //jika jenis jawaban optional dan jawaban tidak kosong
-                if ($jenis == 'optional') {
-
-                    if( $jawaban != "-" ) {
-                        $jawaban_data = array();
-                        //cari jawaban pada soal dengan $id_soal
-                        $ambil_soal = $this->db->get_where('soal', array(
-                            'soal_tahunajaran'=>$this->tahunajaran,
-                            'soal_id' => $id_soal
-                        ))->result();
-                        foreach ($ambil_soal as $soal) {
-                            $soal_text_jawab = json_decode($soal->soal_text_jawab);
-
-                            //samakan jawaban peserta dengan jawaban soal
-                            $nomor_jawaban = 0;
-                            foreach ($soal_text_jawab as $soal_text_jawab_item) {
-
-                                if ( $soal_text_jawab_item[0] == 1 && $jawaban == $nomor_jawaban) {
-                                    $jumlah_benar++;
-                                }
-
-                                $nomor_jawaban++;
-                            }
-
-                        }
-
-                        $jumlah_terjawab++;
-                    }
-
-                    //}elseif ($jenis == 'checkbox' && $jawaban != "" && $jawaban != "-") {
-                    //}elseif ($jenis == 'essay' && $jawaban != "" && $jawaban != "-") {
-                }
-
-
-            }
-
-            $jumlah_tidakterjawab = $jumlah_soal - $jumlah_terjawab;
-            $jumlah_salah = $jumlah_soal - $jumlah_benar;
-
-
-            if ($jumlah_soal == 50) {
-                $nilai = $jumlah_benar * 2;
-            } elseif ($jumlah_soal == 40) {
-                $nilai = ($jumlah_benar * 25) / 10;
-            } elseif ($jumlah_soal == 30) {
-                $nilai = ($jumlah_benar / 3) * 10;
-            } elseif ($jumlah_soal == 25) {
-                $nilai = $jumlah_benar * 4;
-            }
-
-
-            $nilai = round($nilai, 2);
-            $nilai_bulat = round($nilai);
-
-
-
-
-            $this->db->where(array(
-                'soal_jawab_tahunajaran'=>$this->tahunajaran,
-                'soal_jawab_id'   => $id
-            ));
-            $this->db->update('soal_jawab', array(
-                'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
-
-                'soal_jawab_benar'  => $jumlah_benar,
-                'soal_jawab_salah'  => $jumlah_salah,
-                'soal_jawab_ok'     => $jumlah_terjawab,
-                'soal_jawab_none'   => $jumlah_tidakterjawab,
-                'soal_jawab_nilai'  => $nilai,
-            ));
-
-
-            $response["success"] = true;
-            $response["response"] = array(
-                "jumlah_soal" => $jumlah_soal,
-                "terkirim" => $jumlah_terjawab
-            );
-
-        }
-
-        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
-        echo json_encode($response);
-
-    }
-
-    function ujiansave(){
-
-        $response = array();
-        $response["success"] = false;
-        $response["response"] = array();
-        $id     = $this->input->get('id');
-        $data   = $this->input->post('data');
-        $data2  = explode(",",$data);
-
-        //$response["data"] = $data;
-        //$response["data2"] = $data2;
-
-        $aa = array();
-        $aa["a"] = array();
-        $aa["b"] = array();
-        $update_ = array();
-
-        foreach ($data2 as $val) {
-            $pc = explode(":", $val);
-
-            $id_soal = $pc[0];
-            $jenis = $pc[1];
-            $ragu = $pc[2];
-            $jawaban = $pc[3];
-
-
-            array_push($update_, array($id_soal, $jenis, $ragu, $jawaban));
-
-
-        }
-
-        //$response["update_"] = $update_;
-
-        //simpan dulu data peserta
-
-        $this->db->where(array(
-            'soal_jawab_tahunajaran'=>$this->tahunajaran,
             'soal_jawab_id'   => $id
         ));
         $this->db->update('soal_jawab', array(
             'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
             'soal_jawab_list_opsi'      => json_encode($update_),
+            'soal_jawab_status'         => 'N'
         ));
 
 
         //hitung jawaban peserta
 
-        $soal_jawab = $this->db->get_where('soal_jawab',array(
-            'soal_jawab_tahunajaran'=>$this->tahunajaran,
-            'soal_jawab_id'=> $id
-        ))->result();
+        $soal_jawab = $this->db->get_where('soal_jawab',array('soal_jawab_id'=> $id))->result();
         foreach ($soal_jawab as $x) {
 
             $soal_jawab_list_opsi = json_decode($x->soal_jawab_list_opsi);
@@ -1215,10 +729,7 @@ class Apiv6 extends CI_Controller
                     if( $jawaban != "-" ) {
                         $jawaban_data = array();
                         //cari jawaban pada soal dengan $id_soal
-                        $ambil_soal = $this->db->get_where('soal', array(
-                            'soal_tahunajaran'=>$this->tahunajaran,
-                            'soal_id' => $id_soal
-                        ))->result();
+                        $ambil_soal = $this->db->get_where('soal', array('soal_id' => $id_soal))->result();
                         foreach ($ambil_soal as $soal) {
                             $soal_text_jawab = json_decode($soal->soal_text_jawab);
 
@@ -1249,9 +760,7 @@ class Apiv6 extends CI_Controller
             $jumlah_salah = $jumlah_soal - $jumlah_benar;
 
 
-            if ($jumlah_soal == 50) {
-                $nilai = $jumlah_benar * 2;
-            } elseif ($jumlah_soal == 40) {
+            if ($jumlah_soal == 40) {
                 $nilai = ($jumlah_benar * 25) / 10;
             } elseif ($jumlah_soal == 30) {
                 $nilai = ($jumlah_benar / 3) * 10;
@@ -1265,8 +774,8 @@ class Apiv6 extends CI_Controller
 
 
 
+
             $this->db->where(array(
-                'soal_jawab_tahunajaran'=>$this->tahunajaran,
                 'soal_jawab_id'   => $id
             ));
             $this->db->update('soal_jawab', array(
@@ -1282,9 +791,140 @@ class Apiv6 extends CI_Controller
 
 
             $response["success"] = true;
-            $response["response"] = array(
-                "terkirim" => $jumlah_terjawab
-            );
+
+        }
+
+        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
+        echo json_encode($response);
+
+    }
+
+    function ujiansave(){
+
+        $response = array();
+        $response["success"] = false;
+        $response["response"] = array();
+        $id     = $this->input->get('id');
+        $data   = $this->input->post('data');
+        $data2  = explode(",",$data);
+
+        $aa = array();
+        $aa["a"] = array();
+        $aa["b"] = array();
+        $update_ = array();
+
+        foreach ($data2 as $val) {
+            $pc = explode(":", $val);
+
+            $id_soal = $pc[0];
+            $jenis = $pc[1];
+            $ragu = $pc[2];
+            $jawaban = $pc[3];
+
+
+            array_push($update_, array($id_soal, $jenis, $ragu, $jawaban));
+
+
+        }
+
+
+        //simpan dulu data peserta
+
+        $this->db->where(array(
+            'soal_jawab_id'   => $id
+        ));
+        $this->db->update('soal_jawab', array(
+            'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
+            'soal_jawab_list_opsi'      => json_encode($update_),
+        ));
+
+
+        //hitung jawaban peserta
+
+        $soal_jawab = $this->db->get_where('soal_jawab',array('soal_jawab_id'=> $id))->result();
+        foreach ($soal_jawab as $x) {
+
+            $soal_jawab_list_opsi = json_decode($x->soal_jawab_list_opsi);
+            $jumlah_soal = $x->soal_jawab_jumlah_soal;
+            $jumlah_benar = 0;
+            $jumlah_salah = 0;
+            $jumlah_terjawab = 0;
+            $jumlah_tidakterjawab = 0;
+            $nilai = 0;
+
+            foreach ($soal_jawab_list_opsi as $soal_jawab_list_opsi_item) {
+                $id_soal = $soal_jawab_list_opsi_item[0];
+                $jenis = $soal_jawab_list_opsi_item[1];
+                $ragu = $soal_jawab_list_opsi_item[2];
+                $jawaban    = $soal_jawab_list_opsi_item[3]; //0-4
+
+                //jika jenis jawaban optional dan jawaban tidak kosong
+                if ($jenis == 'optional') {
+
+                    if( $jawaban != "-" ) {
+                        $jawaban_data = array();
+                        //cari jawaban pada soal dengan $id_soal
+                        $ambil_soal = $this->db->get_where('soal', array('soal_id' => $id_soal))->result();
+                        foreach ($ambil_soal as $soal) {
+                            $soal_text_jawab = json_decode($soal->soal_text_jawab);
+
+                            //samakan jawaban peserta dengan jawaban soal
+                            $nomor_jawaban = 0;
+                            foreach ($soal_text_jawab as $soal_text_jawab_item) {
+
+                                if ( $soal_text_jawab_item[0] == 1 && $jawaban == $nomor_jawaban) {
+                                    $jumlah_benar++;
+                                }
+
+                                $nomor_jawaban++;
+                            }
+
+                        }
+
+                        $jumlah_terjawab++;
+                    }
+
+                    //}elseif ($jenis == 'checkbox' && $jawaban != "" && $jawaban != "-") {
+                    //}elseif ($jenis == 'essay' && $jawaban != "" && $jawaban != "-") {
+                }
+
+
+            }
+
+            $jumlah_tidakterjawab = $jumlah_soal - $jumlah_terjawab;
+            $jumlah_salah = $jumlah_soal - $jumlah_benar;
+
+
+            if ($jumlah_soal == 40) {
+                $nilai = ($jumlah_benar * 25) / 10;
+            } elseif ($jumlah_soal == 30) {
+                $nilai = ($jumlah_benar / 3) * 10;
+            } elseif ($jumlah_soal == 25) {
+                $nilai = $jumlah_benar * 4;
+            }
+
+
+            $nilai = round($nilai, 2);
+            $nilai_bulat = round($nilai);
+
+
+
+            $this->db->where(array(
+                'soal_jawab_id'   => $id
+            ));
+            $this->db->update('soal_jawab', array(
+                'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
+
+                'soal_jawab_benar'  => $jumlah_benar,
+                'soal_jawab_salah'  => $jumlah_salah,
+                'soal_jawab_ok'     => $jumlah_terjawab,
+                'soal_jawab_none'   => $jumlah_tidakterjawab,
+                'soal_jawab_nilai'  => $nilai,
+            ));
+
+
+
+            $response["success"] = true;
 
         }
 
@@ -1294,264 +934,164 @@ class Apiv6 extends CI_Controller
 
     }
 
+    function ujiansimpanakhir(){
 
-
-
-
-
-
-
-    /**
-     * @return mixed
-     * Arsip
-     */
-
-    function arsip(){
-        $tahun = $this->input->get('t');
-
-        $this->db->select('*')->from('soal');
-
-        $this->db->where('soal_tahunajaran',$tahun);
-
-        $this->db->group_by('soal_pelajaran');
-        $this->db->group_by('soal_kelas');
-        $this->db->group_by('soal_guru');
-
-        //sort data by ascending or desceding order
-        if(!empty($params['search']['sortBy'])){
-            $this->db->order_by('soal_date',$params['search']['sortBy']);
-        }else{
-            $this->db->order_by('soal_date','desc');
-        }
-
-        $nomor = 0;
         $data = array();
-        foreach ($this->db->get()->result_array() as $row){
-            $baris = array();
+        $data['status'] = 'no';
+        $data['response'] = 'Gagal disimpan';
 
-            $nomor++;
+        $id = $this->input->get('id');
 
-            $soal_pelajaran     = $row['soal_pelajaran'];
-            $soal_guru     = $row['soal_guru'];
-            $soal_untuk     = $row['soal_untuk'];
-            $soal_kelas     = $row['soal_kelas'];
+        $soal_jawab = $this->db->get_where('soal_jawab',array('soal_jawab_id'=> $id))->result();
+        foreach ($soal_jawab as $x) {
 
-            $baris['soal_kelas']     = $soal_kelas;
-            $baris['soal_pelajaran']     = $soal_pelajaran;
-            $baris['soal_guru']     = $soal_guru;
-            $baris['soal_untuk']     = $soal_untuk;
+            $soal_jawab_list_opsi = json_decode($x->soal_jawab_list_opsi);
+            $jumlah_soal = $x->soal_jawab_jumlah_soal;
+            $jumlah_benar = 0;
+            $jumlah_salah = 0;
+            $jumlah_terjawab = 0;
+            $jumlah_tidakterjawab = 0;
+            $nilai = 0;
 
-            $w1 = array(
-                'soal_tahunajaran'=>$tahun,
-                'soal_pelajaran' => $soal_pelajaran,
-                'soal_guru' => $soal_guru,
-                'soal_untuk' => $soal_untuk
-            );
+            foreach ($soal_jawab_list_opsi as $soal_jawab_list_opsi_item) {
+                $id_soal = $soal_jawab_list_opsi_item[0];
+                $jenis = $soal_jawab_list_opsi_item[1];
+                $ragu = $soal_jawab_list_opsi_item[2];
+                $jawaban    = $soal_jawab_list_opsi_item[3]; //0-4
 
-            if(!empty($soal_kelas)){
-                $w1 = array(
-                    'soal_tahunajaran'=>$tahun,
-                    'soal_pelajaran' => $soal_pelajaran,
-                    'soal_guru' => $soal_guru,
-                    'soal_kelas' => $soal_kelas,
-                    'soal_untuk' => $soal_untuk
-                );
+                //jika jenis jawaban optional dan jawaban tidak kosong
+                if ($jenis == 'optional') {
+
+                    if( $jawaban != "-" ) {
+                        $jawaban_data = array();
+                        //cari jawaban pada soal dengan $id_soal
+                        $ambil_soal = $this->db->get_where('soal', array('soal_id' => $id_soal))->result();
+                        foreach ($ambil_soal as $soal) {
+                            $soal_text_jawab = json_decode($soal->soal_text_jawab);
+
+                            //samakan jawaban peserta dengan jawaban soal
+                            $nomor_jawaban = 0;
+                            foreach ($soal_text_jawab as $soal_text_jawab_item) {
+
+                                if ( $soal_text_jawab_item[0] == 1 && $jawaban == $nomor_jawaban) {
+                                    $jumlah_benar++;
+                                }
+
+                                $nomor_jawaban++;
+                            }
+
+                        }
+
+                        $jumlah_terjawab++;
+                    }
+
+                    //}elseif ($jenis == 'checkbox' && $jawaban != "" && $jawaban != "-") {
+                    //}elseif ($jenis == 'essay' && $jawaban != "" && $jawaban != "-") {
+                }
+
+
             }
 
-            $data_soal = $this->db->get_where("soal",$w1);
-
-            $baris['soal_jumlah_terkumpul']     = $data_soal->num_rows();
-            $baris['soal_jumlah_terkumpul_total']     = 0;
+            $jumlah_salah = $jumlah_soal - $jumlah_benar;
 
 
-            array_push($data, $baris);
+            $jumlah_tidakterjawab = $jumlah_soal - $jumlah_terjawab;
+
+
+            if ($jumlah_soal == 40) {
+                $nilai = ($jumlah_benar * 25) / 10;
+            } elseif ($jumlah_soal == 30) {
+                $nilai = ($jumlah_benar / 3) * 10;
+            } elseif ($jumlah_soal == 25) {
+                $nilai = $jumlah_benar * 4;
+            }
+
+
+            $nilai = round($nilai, 2);
+            $nilai_bulat = round($nilai);
+
+
+
+            $this->db->where(array(
+                'soal_jawab_id'   => $id
+            ));
+            $this->db->update('soal_jawab', array(
+                'soal_jawab_selesai' => date('Y-m-d H:i:s'),
+                'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
+                'soal_jawab_status' => 'N',
+
+                'soal_jawab_benar'  => $jumlah_benar,
+                'soal_jawab_salah'  => $jumlah_salah,
+                'soal_jawab_ok'     => $jumlah_terjawab,
+                'soal_jawab_none'   => $jumlah_tidakterjawab,
+                'soal_jawab_nilai'  => $nilai,
+            ));
+
+            $data['status'] = 'ok';
+            $data['response'] = 'Data berhasil disimpan';
         }
 
+
+        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data);
-
     }
 
-
-
-    /**
-     * Other function
-     */
-
-    function uploadprofile(){
-        $this->load->library('upload');
-        $fileUID = $this->input->post('uploaded_uid');
-
-        $time = time();
-
-
-        $config['upload_path'] = './assets/profile/'; //path folder
-        $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp'; //type yang dapat diakses bisa anda sesuaikan
-        $config['encrypt_name'] = FALSE; //Enkripsi nama yang terupload
-
-        $config['file_name'] = $fileUID;
-        $config['overwrite'] = true;
-        $config['max_size'] = 10240;
-
-        $this->upload->initialize($config);
-
-        $response = array();
-        $response["success"] = false;
-        $response["response"] = "";
-
-        $uploaded_file = $_FILES['uploaded_file']['name'];
-        if(!empty($uploaded_file)){
-
-            if(file_exists('./assets/profile/'.$uploaded_file))
-                unlink('./assets/profile/'.$uploaded_file);
-
-            if ($this->upload->do_upload('uploaded_file')){
-
-
-
-                $gbr = $this->upload->data();
-                $file = $gbr['file_name'];
-
-                //Compress Image
-                $config['image_library']='gd2';
-                $config['source_image']='./assets/profile/'.$file;
-                $config['create_thumb']= FALSE;
-                $config['maintain_ratio']= TRUE;
-                $config['quality']= '70%';
-                //$config['width']= 200;
-                //$config['height']= 200;
-
-                $config['new_image']= './assets/profile/'.$file;
-                $this->load->library('image_lib', $config);
-                $this->image_lib->crop();
-
-
-                $this->db->query("UPDATE cbt_peserta SET peserta_foto = '$file' WHERE peserta_id = '$fileUID'");
-
-                $response["success"] = true;
-                $response["response"] = array("foto" => $this->config->item('base_url') . '/assets/profile/' . $file);
-
-            }
-
-        }
-
-
-        $this->output->set_header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($response);
-    }
 
     /**
      * @return mixed
      * Function _none()
      */
 
-    function _jumlah_pesan($untuk){
-
-        $ikut = $this->db->select('*')->from('pesan');
-
-        if( $untuk == "peserta" ){
-            $ikut = $ikut->where("pesan_untuk='siswa'");
-            $ikut = $ikut->or_where("pesan_untuk='semua'");
-        }elseif( $untuk == "pengawas" ){
-            $ikut = $ikut->or_where("pesan_untuk='semua'");
-        }
-
-        return $ikut->get()->num_rows();
-    }
-
-
-    function _jumlah_jawab_by($uid, $tgl, $ruangan, $kelas, $jurusan){
-        $this->db->select("*");
-        $this->db->from("soal_jawab");
-
-        $this->db->where("soal_jawab_tahunajaran", $this->tahunajaran);
-
-        if(!empty($uid)){
-            $this->db->where("siswa_id", $uid);
-        }
-
-        if(!empty($tgl)){
-            $this->db->where("soal_jawab_tanggal", $tgl);
-        }
-
-        $this->db->where("soal_jawab_ruangan", $ruangan);
-        $this->db->where("soal_jawab_kelas", $kelas);
-        $this->db->where("soal_jawab_jurusan", $jurusan);
-
-        return $this->db->get()->num_rows();
-    }
-
-
-    function _jumlah_ujian_by($uid, $tgl, $kelas, $jurusan){
-        $this->db->select("*");
-        $this->db->from("ujian");
-
-        $this->db->where("ujian_tahunajaran", $this->tahunajaran);
-
-
-        $this->db->where("ujian_kelas", $kelas);
-
-        if(!empty($tgl)){
-            $this->db->where("ujian_tanggal", $tgl);
-        }
-
-        if(!empty($jurusan)){
-            $this->db->where("ujian_jurusan='' OR ujian_jurusan='$jurusan'");
-        }
-
-        return $this->db->get()->num_rows();
-
-    }
-
-    function _jumlah_peserta_ruangan($tgl,$ruangan){
-        return $this->db->select('*')->from('soal_jawab')->where(
-            array(
-                "soal_jawab_tahunajaran"=> $this->tahunajaran,
-                "soal_jawab_tanggal" => $tgl,
-                "soal_jawab_ruangan" => $ruangan
-            )
-        )->get()->num_rows();
-    }
 
     function _jumlah_peserta(){
-        return $this->db->select('*')->from('peserta')->get()->num_rows();
+        $ikut = $this->db->select('*')->from('peserta');
+        $ikut = $ikut->get();
+        return $ikut->num_rows();
     }
 
     function _jumlah_jurusan(){
-        return $this->db->select('*')->from('peserta')->group_by('peserta_jurusan')->get()->num_rows();
+        $ikut = $this->db->select('*')->from('peserta');
+        $ikut = $ikut->group_by('peserta_jurusan');
+        $ikut = $ikut->get();
+
+        return $ikut->num_rows();
     }
 
     function _jumlah_pelajaran($kelas_sekarang,$jurusan_id,$ruang){
-        $this->db->select('*')->from('soal_pembuat');
-        $this->db->where("soal_pembuat_tahunajaran", $this->tahunajaran);
-        $this->db->where('(soal_pembuat_kelas=\'\' OR soal_pembuat_kelas=\''.$kelas_sekarang.'\')');
-        $this->db->where('(soal_pembuat_jurusan=\'\' OR soal_pembuat_jurusan=\''.$jurusan_id.'\')');
-        return $this->db->get()->num_rows();
+        $ikut = $this->db->select('*')->from('soal_pembuat');
+        //$ikut = $ikut->group_by('soal_pembuat_pelajaran');
+        $ikut = $ikut->where('(soal_pembuat_kelas=\'\' OR soal_pembuat_kelas=\''.$kelas_sekarang.'\')');
+        $ikut = $ikut->where('(soal_pembuat_jurusan=\'\' OR soal_pembuat_jurusan=\''.$jurusan_id.'\')');
+        //$ikut = $ikut->where('(soal_pembuat_jurusan_ke=\'\' OR soal_pembuat_jurusan_ke=\''.$ruang.'\')');
+
+        $ikut = $ikut->get();
+
+        return $ikut->num_rows();
     }
 
     function _jumlah_dikerjakan($id){
-        $this->db->select('*')->from('soal_jawab');
-        $this->db->where("soal_jawab_tahunajaran", $this->tahunajaran);
-        $this->db->where('soal_jawab_status','N');
-        $this->db->where("siswa_id = $id");
+        $ikut = $this->db->select('*')->from('soal_jawab');
+        $ikut = $ikut->where('soal_jawab_status','N');
+        $ikut = $ikut->where("siswa_id = $id");
+        $ikut = $ikut->get();
 
-        return $this->db->get()->num_rows();
+        return $ikut->num_rows();
     }
 
     function _jumlah_ujian_today($kelas,$jurusan,$agama){
         $jum = 0;
         $tgl = date('Y-m-d');
 
-        $this->db->select('*')->from('ujian');
-        $this->db->where("ujian_tahunajaran", $this->tahunajaran);
-
+        $ikut = $this->db->select('*')->from('ujian');
         //$ikut = $ikut->group_by('soal_pembuat_pelajaran');
-        $this->db->where('(ujian_kelas=\'\' OR ujian_kelas=\''.$kelas.'\')');
+        $ikut = $ikut->where('(ujian_kelas=\'\' OR ujian_kelas=\''.$kelas.'\')');
         //$ikut = $ikut->where('(ujian_jurusan=\'\' OR ujian_jurusan=\''.$jurusan_id.'\')');
         //$ikut = $ikut->where('(soal_pembuat_jurusan_ke=\'\' OR soal_pembuat_jurusan_ke=\''.$ruang.'\')');
 
-        $this->db->where('ujian_tanggal',$tgl);
-        foreach ($this->db->get()->result_array() as $row1){
+        $ikut = $ikut->where('ujian_tanggal',$tgl);
+        $ikut = $ikut->get();
+        foreach ($ikut->result_array() as $row1){
 
             $ujian_jurusan = explode(",",$row1['ujian_jurusan']);
             $ujian_agama = explode(",",$row1['ujian_agama']);
@@ -1723,12 +1263,11 @@ class Apiv6 extends CI_Controller
     }
     function _strip3($strout){
 
-        /**
         $strout = str_replace(
-        "https://cbt.smkn1candipuro.sch.id/uploads/",
-        "https://cbtv4.smkn1candipuro.sch.id/assets/",
-        $strout
-        );*/
+            "https://cbt.smkn1candipuro.sch.id/uploads/",
+            "https://cbtv4.smkn1candipuro.sch.id/assets/",
+            $strout
+        );
 
         $strout = str_replace(
             "&nbsp;&nbsp;",
