@@ -459,81 +459,120 @@ class Apiv6 extends CI_Controller
 
 
     function ujianlist(){
+        $response = array();
+        $response["success"] = false;
+        $response["response"] = array();
 
+        /**
+         * Jika isset waktu maka
+         */
+
+        if( isset( $_GET['waktu'] ) ){
+
+
+            $time_server = (int)date('dmYHi');
+            $time_client = 0;
+
+            $time_client = (int)$this->input->get('waktu');
+
+
+            $response["time_client"] = $time_client;
+            $response["time_server"] = $time_server;
+
+            //jika time client lebih atau kurang dari 1 menit
+            $time_client_lebih = $time_server+2;
+            $time_client_kurang = $time_server-2;
+
+            if( $time_client == $time_server || $time_client == $time_client_lebih || $time_client == $time_client_kurang ){
+
+                $response = $this->_ujianlist($response);
+
+            }else{
+                $response["response"] = "Tanggal server tidak sama\nsilahkan sesuaikan tanggal dan jam\ndi perangkatmu dengan jam server cbt\n" .date('d-m-Y H:i');
+            }
+
+        }else{
+
+            $response = $this->_ujianlist($response);
+
+        }
+
+        $this->output->set_header('Access-Control-Allow-Origin: *');
+        $this->output->set_header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($response,JSON_UNESCAPED_UNICODE);
+    }
+
+    function _ujianlist($response){
         $tgl = date('Y-m-d');
         $uid = $this->input->get('uid');
         $by = $this->input->get('by');
 
 
-        $response = array();
-        $response["success"] = false;
-        $response["response"] = array();
 
-        $users = $this->db->get_where('peserta',array("peserta_id" => $uid));
+        $users = $this->db->get_where('peserta', array("peserta_id" => $uid));
 
 
-        if($users->num_rows() > 0){
+        if ($users->num_rows() > 0) {
 
-            foreach ($users->result_array() as $r2){
+            foreach ($users->result_array() as $r2) {
 
-                $peserta_id  		    = $r2['peserta_id'];
-                $peserta_kelas  	    = $r2['peserta_kelas'];
-                $peserta_jurusan  	    = $r2['peserta_jurusan'];
-                $peserta_jurusan_ke  	= $r2['peserta_jurusan_ke'];
-                $peserta_agama  		= ucfirst($r2['peserta_agama']);
+                $peserta_id = $r2['peserta_id'];
+                $peserta_kelas = $r2['peserta_kelas'];
+                $peserta_jurusan = $r2['peserta_jurusan'];
+                $peserta_jurusan_ke = $r2['peserta_jurusan_ke'];
+                $peserta_agama = ucfirst($r2['peserta_agama']);
 
-                if( $by == "usai"){
+                if ($by == "usai") {
 
                     $ujian = $this->db->select('soal_jawab.*,ujian.*')->from('soal_jawab');
-                    $ujian = $ujian->join("ujian","ujian.ujian_id = soal_jawab.ujian_id");
-                    $ujian = $ujian->where('soal_jawab.siswa_id='.$peserta_id);
+                    $ujian = $ujian->join("ujian", "ujian.ujian_id = soal_jawab.ujian_id");
+                    $ujian = $ujian->where('soal_jawab.siswa_id=' . $peserta_id);
 
                     $ujian = $ujian->where('soal_jawab.soal_jawab_tahunajaran=', $this->tahunajaran);
                     $ujian = $ujian->where('ujian.ujian_tahunajaran=', $this->tahunajaran);
 
 
-
-                    $ujian = $ujian->where('(ujian.ujian_kelas=\'\' OR ujian.ujian_kelas=\''.$peserta_kelas.'\')');
+                    $ujian = $ujian->where('(ujian.ujian_kelas=\'\' OR ujian.ujian_kelas=\'' . $peserta_kelas . '\')');
                     //$ujian = $ujian->where('(soal_jawab.soal_jawab_kelas=\'\' OR soal_jawab.soal_jawab_kelas=\''.$peserta_kelas.'\')');
                     //$ujian = $ujian->where('(soal_jawab.soal_jawab_jurusan=\'\' OR soal_jawab.soal_jawab_jurusan=\''.$peserta_jurusan.'\')');
                     //$ujian = $ujian->where('(soal_jawab.soal_jawab_jurusan_ke=\'\' OR soal_jawab.soal_jawab_jurusan_ke=\''.$peserta_jurusan_ke.'\')');
 
-                    $ujian = $ujian->order_by('soal_jawab.soal_jawab_tanggal' ,"DESC");
-                    $ujian = $ujian->order_by('soal_jawab.soal_jawab_mulai' ,"DESC");
+                    $ujian = $ujian->order_by('soal_jawab.soal_jawab_tanggal', "DESC");
+                    $ujian = $ujian->order_by('soal_jawab.soal_jawab_mulai', "DESC");
 
                     $ujian = $ujian->get();
-                    foreach ($ujian->result_array() as $row1){
+                    foreach ($ujian->result_array() as $row1) {
 
                         $ujian_tanggal = $row1['soal_jawab_tanggal'];
 
 
-                        $data_ujian[ 'ujian_id' ] = $row1['ujian_id'];
-                        $data_ujian[ 'ujian_tanggal' ] = $ujian_tanggal;
-                        $data_ujian[ 'ujian_tanggal_indo' ] = $this->m->tanggalhari2( $row1['soal_jawab_tanggal'],true );
-                        $data_ujian[ 'ujian_mulai' ] = date("H:i:s",strtotime($row1['soal_jawab_mulai']));
-                        $data_ujian[ 'ujian_selesai' ] = date("H:i:s",strtotime($row1['soal_jawab_selesai']));
+                        $data_ujian['ujian_id'] = $row1['ujian_id'];
+                        $data_ujian['ujian_tanggal'] = $ujian_tanggal;
+                        $data_ujian['ujian_tanggal_indo'] = $this->m->tanggalhari2($row1['soal_jawab_tanggal'], true);
+                        $data_ujian['ujian_mulai'] = date("H:i:s", strtotime($row1['soal_jawab_mulai']));
+                        $data_ujian['ujian_selesai'] = date("H:i:s", strtotime($row1['soal_jawab_selesai']));
 
                         //$waktu = (int) $row1['ujian_waktu'];
                         //$data_ujian[ 'ujian_akhir' ] = date('Y-m-d H:i:s',strtotime('+'.$waktu.' minutes',strtotime($row1['ujian_mulai'])));
 
-                        $data_ujian[ 'ujian_waktu' ] = $row1['soal_jawab_waktu'];
-                        $data_ujian[ 'ujian_jenis' ] = $row1['ujian_jenis'];
-                        $data_ujian[ 'ujian_tampil' ] = "";//$row1['ujian_tampil'];
-                        $data_ujian[ 'ujian_jumlah_soal' ] = $row1['ujian_jumlah_soal'];
+                        $data_ujian['ujian_waktu'] = $row1['soal_jawab_waktu'];
+                        $data_ujian['ujian_jenis'] = $row1['ujian_jenis'];
+                        $data_ujian['ujian_tampil'] = "";//$row1['ujian_tampil'];
+                        $data_ujian['ujian_jumlah_soal'] = $row1['ujian_jumlah_soal'];
 
-                        $data_ujian[ 'ujian_untuk' ] = $row1['ujian_untuk'];
-                        $data_ujian[ 'ujian_guru' ] =  $row1['ujian_guru'];
-                        $data_ujian[ 'ujian_pelajaran' ] = $row1['soal_jawab_pelajaran'];
+                        $data_ujian['ujian_untuk'] = $row1['ujian_untuk'];
+                        $data_ujian['ujian_guru'] = $row1['ujian_guru'];
+                        $data_ujian['ujian_pelajaran'] = $row1['soal_jawab_pelajaran'];
 
 
                         $tanggal_sekarang = date('Y-m-d H:i:s');
-                        $ujian_mulai = date("Y-m-d H:i:s", strtotime($row1['soal_jawab_mulai']) );
+                        $ujian_mulai = date("Y-m-d H:i:s", strtotime($row1['soal_jawab_mulai']));
                         $ujian_terlambat = date("Y-m-d H:i:s", strtotime('+' . $row1['soal_jawab_waktu'] . ' minutes', strtotime($row1['soal_jawab_mulai'])));
 
                         $status = 2;
-                        if($tanggal_sekarang < $ujian_mulai ){
+                        if ($tanggal_sekarang < $ujian_mulai) {
                             $status = 0;
-                        }elseif($tanggal_sekarang >= $ujian_mulai and $tanggal_sekarang <=  $ujian_terlambat){
+                        } elseif ($tanggal_sekarang >= $ujian_mulai and $tanggal_sekarang <= $ujian_terlambat) {
                             $status = 1;
                         }
 
@@ -543,15 +582,14 @@ class Apiv6 extends CI_Controller
                         }
 
 
-
-                        $data_ujian[ 'ujian_status' ] = $status;
+                        $data_ujian['ujian_status'] = $status;
 
                         array_push($response["response"], $data_ujian);
                         $response["success"] = true;
 
                     }
 
-                }else{
+                } else {
 
                     $ujian = $this->db->select('*')->from('ujian');
 
@@ -560,38 +598,38 @@ class Apiv6 extends CI_Controller
                     //$ujian = $ujian->where('(ujian.ujian_agama=\'\' OR ujian.ujian_agama=\''.$peserta_agama.'\')');
 
 
-                    if( $by == "besok"){
-                        $tgl = date('Y-m-d', strtotime($tgl. ' + 1 days'));
-                        $ujian = $ujian->where('ujian.ujian_tanggal' ,$tgl);
-                    }else{
-                        $ujian = $ujian->where('ujian.ujian_tanggal' ,$tgl);
+                    if ($by == "besok") {
+                        $tgl = date('Y-m-d', strtotime($tgl . ' + 1 days'));
+                        $ujian = $ujian->where('ujian.ujian_tanggal', $tgl);
+                    } else {
+                        $ujian = $ujian->where('ujian.ujian_tanggal', $tgl);
                     }
 
                     $ujian = $ujian->where('ujian_tahunajaran', $this->tahunajaran);
 
-                    $ujian = $ujian->where('(ujian.ujian_kelas=\'\' OR ujian.ujian_kelas=\''.$peserta_kelas.'\')');
+                    $ujian = $ujian->where('(ujian.ujian_kelas=\'\' OR ujian.ujian_kelas=\'' . $peserta_kelas . '\')');
                     //$ujian = $ujian->where('ujian.ujian_jurusan',"")->or_where('ujian.ujian_jurusan LIKE \'%'.$peserta_jurusan.'%\'');
                     //$ujian = $ujian->where('ujian.ujian_agama',"")->or_where('ujian.ujian_agama LIKE \'%'.$peserta_agama.'%\'');
 
-                    $ujian = $ujian->order_by('ujian_mulai' ,"DESC");
+                    $ujian = $ujian->order_by('ujian_mulai', "DESC");
 
                     $ujian = $ujian->get();
-                    foreach ($ujian->result_array() as $row1){
+                    foreach ($ujian->result_array() as $row1) {
 
-                        $ujian_jurusan = explode(",",$row1['ujian_jurusan']);
-                        $ujian_agama = explode(",",$row1['ujian_agama']);
+                        $ujian_jurusan = explode(",", $row1['ujian_jurusan']);
+                        $ujian_agama = explode(",", $row1['ujian_agama']);
 
                         $a = 0;
                         $b = 0;
-                        if( empty($row1['ujian_jurusan']) || (count($ujian_jurusan) > 0 && in_array($peserta_jurusan,$ujian_jurusan) ) ) {
+                        if (empty($row1['ujian_jurusan']) || (count($ujian_jurusan) > 0 && in_array($peserta_jurusan, $ujian_jurusan))) {
                             $a++;
                         }
 
-                        if( empty($row1['ujian_agama']) || (count($ujian_agama) > 0 && in_array($peserta_agama,$ujian_agama) ) ) {
+                        if (empty($row1['ujian_agama']) || (count($ujian_agama) > 0 && in_array($peserta_agama, $ujian_agama))) {
                             $b++;
                         }
 
-                        if( $a == 1 && $b == 1 ) {
+                        if ($a == 1 && $b == 1) {
                             $ujian_tanggal = $row1['ujian_tanggal'];
 
                             $data_ujian['ujian_id'] = $row1['ujian_id'];
@@ -631,8 +669,8 @@ class Apiv6 extends CI_Controller
 
 
                             $tanggal_sekarang = date('Y-m-d H:i:s');
-                            $ujian_mulai = date("Y-m-d H:i:s", strtotime($ujian_tanggal." ".$row1['ujian_mulai']) );
-                            $ujian_terlambat = date("Y-m-d H:i:s", strtotime('+' . $row1['ujian_waktu'] . ' minutes', strtotime($ujian_tanggal." ".$row1['ujian_mulai'])));
+                            $ujian_mulai = date("Y-m-d H:i:s", strtotime($ujian_tanggal . " " . $row1['ujian_mulai']));
+                            $ujian_terlambat = date("Y-m-d H:i:s", strtotime('+' . $row1['ujian_waktu'] . ' minutes', strtotime($ujian_tanggal . " " . $row1['ujian_mulai'])));
 
 
                             $status = 2;
@@ -669,14 +707,15 @@ class Apiv6 extends CI_Controller
                 }
 
             }
-        }else{
-            $response["response"] = "Tidak ditemukan data";
+        } else {
+            $response["response"] = "Tidak ditemukan data, data ujian tidak tersedia";
         }
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
-        $this->output->set_header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($response,JSON_UNESCAPED_UNICODE);
+
+        return $response;
+
     }
+
 
     function ujianget(){
         $response = array();
@@ -990,21 +1029,21 @@ class Apiv6 extends CI_Controller
         }
 
 
-/**
+        /**
         $ss1 = $this->db->get_where('soal_jawab',array(
-            'soal_jawab_tahunajaran'=>$this->tahunajaran,
-            'soal_jawab_id'=> $id
+        'soal_jawab_tahunajaran'=>$this->tahunajaran,
+        'soal_jawab_id'=> $id
         ));
 
 
 
         if($ss1->num_rows() <= 0) {
-            $this->db->insert('soal_jawab',array(
-                'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
-                'soal_jawab_list_opsi'      => json_encode($update_),
-                'soal_jawab_status'         => 'N'
-            ));
-            $id = $this->db->insert_id();
+        $this->db->insert('soal_jawab',array(
+        'soal_jawab_last_update'    => date('Y-m-d H:i:s'),
+        'soal_jawab_list_opsi'      => json_encode($update_),
+        'soal_jawab_status'         => 'N'
+        ));
+        $id = $this->db->insert_id();
         }*/
 
         //simpan dulu data peserta
