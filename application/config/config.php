@@ -26,9 +26,13 @@ date_default_timezone_set('Asia/Jakarta');
 |
 */
 
-//$this->config->item('base_url');
-$config['base_url'] = 'http://192.168.10.188/usbka-serverv4-restapi';
-$config['base_url_cbt'] = 'http://192.168.10.188/usbka-serverv4';
+
+$bb1  = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
+$bb1 .= "://" . $_SERVER['HTTP_HOST'];
+
+$config['base_url'] = $bb1. '/usbka-serverv4-restapi';
+$config['base_url_cbt'] = $bb1. '/usbka-serverv4';
+
 $config['code'] = 65;
 $config['codename'] = 'v2.65';
 

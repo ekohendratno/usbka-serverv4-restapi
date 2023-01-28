@@ -1731,10 +1731,7 @@ class Apiv6 extends CI_Controller
     }
     function _strip($var) {
 
-
-
-
-        $allowed = '<p><br>
+        $allowed = '<sup><sub><p><br>
             <ul><ol><li><dl><dt><dd><strong><em><b><i><u>
             <img><audio><video>
             <table><tbody><td><tfoot><th><thead><tr>
@@ -1743,7 +1740,7 @@ class Apiv6 extends CI_Controller
         return strip_tags($var, $allowed);
     }
     function _strip1($var) {
-        $allowed = '<p><br>
+        $allowed = '<sup><sub><p><br>
             <ul><ol><li><dl><dt><dd><strong><em><b><i><u>
             <img><audio><video>
             <table><tbody><td><tfoot><th><thead><tr>
@@ -1752,7 +1749,7 @@ class Apiv6 extends CI_Controller
         return strip_tags($var, $allowed);
     }
     function _strip2($var) {
-        $allowed = '<br>
+        $allowed = '<sup><sub><br>
             <ul><ol><li><dl><dt><dd><strong><em><b><i><u>
             <img><audio><video>
             <table><tbody><td><tfoot><th><thead><tr>
