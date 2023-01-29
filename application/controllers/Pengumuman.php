@@ -19,7 +19,7 @@ class Pengumuman extends CI_Controller
         $data['uid'] = !empty($uid) ? $uid : 0;
 
 
-        $this->load->view('apiv4/pengumuman',$data);
+        $this->load->view('apiv6/pengumuman',$data);
     }
 
     function timeline($uid){
@@ -73,6 +73,7 @@ class Pengumuman extends CI_Controller
                         array_push($response["response"], $item);
                     }
 
+                    /**
                     $item = array();
                     $item[ 'pesan_id' ] = 0;
                     $item[ 'pesan_aksi' ] = 'pesan';
@@ -81,7 +82,7 @@ class Pengumuman extends CI_Controller
                     $item[ 'pesan_tanggal' ] = $this->m->tanggalhari2( "2021-01-01",true );
                     $item[ 'username' ] = 'system';
 
-                    array_push($response["response"], $item);
+                    array_push($response["response"], $item);*/
 
 
 
@@ -121,17 +122,16 @@ class Pengumuman extends CI_Controller
 
                 array_push($response["response"], $item);
             }
-
+/**
             $item = array();
             $item[ 'pesan_id' ] = 0;
             $item[ 'pesan_aksi' ] = 'pesan';
             $item[ 'pesan_untuk' ] = 'semua';
             $item[ 'pesan_text' ] = '<p>Selamat Datang di USBKA - Aplikasi Ujian Berbasis Komputer Android</p>';
             $item[ 'pesan_tanggal' ] = $this->m->tanggalhari2( "2021-01-01",true );
-            $item[ 'username' ] = 'system';
+            $item[ 'username' ] = 'system';*/
 
             $response["success"] = true;
-            array_push($response["response"], $item);
 
         }
 

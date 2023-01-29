@@ -12,10 +12,10 @@ class Apiv3 extends CI_Controller
         $this->load->helpers('url');
 
 
-        $this->new_version_code = 400;
-        $this->new_version_name = "CBT Versi 4.00";
+        $this->new_version_code = 412;
+        $this->new_version_name = "CBT Versi 4.12";
 
-        $this->cronjob();
+        //$this->cronjob();
     }
 
     function index(){
@@ -117,7 +117,7 @@ class Apiv3 extends CI_Controller
         $response["response"] = array(
             "code" => $this->new_version_code,
             "name" => $this->new_version_name,
-            "link" => $this->config->item('base_url_cbt') . "/update"
+            "link" => $this->config->item('base_url') . "/apiv3/autoupdate"
 
         );
 
@@ -163,7 +163,7 @@ class Apiv3 extends CI_Controller
             <p>Proses download <?php echo $this->new_version_name;?> akan berlangsung secara otomatis, jika tidak download <a href="<?php echo base_url("uploads/autoupdate/cbt".$this->new_version_code.".apk");?>">manual</a>.</p>
         </center>
         <script type="text/javascript">
-            location.href = '<?php echo base_url("uploads/autoupdate/cbt".$this->new_version_code.".apk");?>'
+            location.href = '<?php echo base_url("assets/update/cbt".$this->new_version_code.".apk");?>'
         </script>
 
         </body>
@@ -198,6 +198,8 @@ class Apiv3 extends CI_Controller
         $response = array();
         $response["response"] = array();
 
+
+        /**
 
         $this->db->select('*')->from('users');
         $this->db->where("username",$username);
@@ -244,7 +246,9 @@ class Apiv3 extends CI_Controller
         }else{
             $response["success"] = false;
             $response["response"] = "Tidak ditemukan data";
-        }
+        }*/
+        $response["success"] = false;
+        $response["response"] = "Silahkan update ke versi terbaru";
 
         $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
@@ -259,6 +263,7 @@ class Apiv3 extends CI_Controller
         $response["response"] = array();
 
 
+        /**
         $this->db->select('*')->from('users');
         $this->db->where("username", $username);
         $this->db->where("password", $password);
@@ -268,7 +273,10 @@ class Apiv3 extends CI_Controller
 
         }else{
             $response["success"] = false;
-        }
+        }*/
+
+
+        $response["success"] = false;
 
         $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
