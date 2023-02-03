@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
 date_default_timezone_set('Asia/Jakarta');
 //$config['time_reference'] = 'Asia/Jakarta';
 /*
@@ -26,13 +27,11 @@ date_default_timezone_set('Asia/Jakarta');
 |
 */
 
+//$this->config->item('base_url');
 
-$bb1  = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
-$bb1 .= "://" . $_SERVER['HTTP_HOST'];
 
-$config['base_url'] = $bb1. '/usbka-serverv4-restapi';
-$config['base_url_cbt'] = $bb1. '/usbka-serverv4';
-
+$config['base_url'] = 'http://192.168.196.61:8000/usbka-serverv4-restapi';
+$config['base_url_cbt'] = 'http://192.168.196.61:8000/usbka-serverv4';
 $config['code'] = 65;
 $config['codename'] = 'v2.65';
 
@@ -391,7 +390,7 @@ $config['encryption_key'] = '';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = sys_get_temp_dir();//NULL;
+$config['sess_save_path'] = null;//__DIR__.'/session';//sys_get_temp_dir();//NULL;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
@@ -459,6 +458,7 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
+
 $config['csrf_protection'] = FALSE;
 $config['csrf_token_name'] = 'csrf_test_name';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';

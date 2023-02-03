@@ -5,6 +5,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- * Safari Renderer * -->
+    <script src="https://unpkg.com/platform@1.3.5/platform.js"></script>
+    <script>
+        if (platform.name.toLowerCase() == "safari" && parseInt(platform.version.split(".")[0]) >= 15) {
+            window.flutterWebRenderer = "html";
+        } else {
+            // Optional, default is `auto`
+            window.flutterWebRenderer = "canvaskit";
+        }
+    </script>
     <link href="<?php echo base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/css/custom.css') ?>" rel="stylesheet">
 
@@ -76,10 +86,10 @@
 
                                         $opsi = array("1", "2", "3", "4", "5");
                                         $opsi2 = array("A", "B", "C", "D", "E");
-                                        for ($j = 0; $j <= count($soal_text_jawab)-1; $j++) {
+                                        for ($j = 0; $j <= count($soal_text_jawab) - 1; $j++) {
 
-                                           
-                                            if(!empty($soal_text_jawab[$j][1])){
+
+                                            if (!empty($soal_text_jawab[$j][1])) {
 
                                                 $opsional = 'opsi_' . $opsi[$j] . '_' . $no;
                                                 $checked = $soal_text_jawab[$j][0] == "1" ? "checked" : "";
@@ -89,10 +99,8 @@
                                                 $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">' . strtoupper($opsi2[$j]) . '</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($soal_text_jawab[$j][1]) . '<p></p></div></label>';
                                                 $html .= '</div>';
                                             }
-
                                         }
                                         $html .= '</div>';
-
                                     } elseif ($jenis == "checked") {
 
                                         $soal_text_jawab = json_decode($item['soal_text_jawab']);
@@ -102,24 +110,20 @@
 
                                         $html .= '<div class="funkyradio">';
 
-                                        for ($j = 0; $j <= count($soal_text_jawab)-1; $j++) {
+                                        for ($j = 0; $j <= count($soal_text_jawab) - 1; $j++) {
 
-                                            if(!empty($soal_text_jawab[$j][1])){
-                                            
+                                            if (!empty($soal_text_jawab[$j][1])) {
+
                                                 $opsional = 'opsi_' . $j . '_' . $no;
                                                 $checked = $soal_text_jawab[$j][0] == "1" ? "checked" : "";
-    
+
                                                 $html .= '<div class="funkyradio-success">';
                                                 $html .= '<input disabled type="checkbox" id="' . $opsional . '" name="opsi_' . $no . '" value="' . strtoupper($j) . '" ' . $checked . '>';
                                                 $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">' . strtoupper($j) . '</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($soal_text_jawab[$j][1]) . '<p></p></div></label>';
                                                 $html .= '</div>';
-
                                             }
-
-
                                         }
                                         $html .= '</div>';
-
                                     } elseif ($jenis == "essay") {
                                         $soal_text_jawab = $item['soal_text_jawab'];
 
@@ -128,12 +132,12 @@
 
 
                                         $html .= '<div class="funkyradio">';
-                                        
+
                                         $html .= '<div class="funkyradio-success">';
                                         $html .= '<input disabled type="radio" id="' . $opsional . '" name="opsi_' . $no . '" value="' . $no . '">';
                                         $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">...</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($soal_text_jawab) . '<p></p></div></label>';
                                         $html .= '</div>';
-                                        
+
                                         $html .= '</div>';
                                     } elseif ($jenis == "essayText") {
                                         $soal_text_jawab = $item['soal_text_jawab'];
@@ -143,14 +147,13 @@
 
 
                                         $html .= '<div class="funkyradio">';
-                                        
+
                                         $html .= '<div class="funkyradio-success">';
                                         $html .= '<input disabled type="radio" id="' . $opsional . '" name="opsi_' . $no . '" value="' . $no . '">';
                                         $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">...</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($soal_text_jawab) . '<p></p></div></label>';
                                         $html .= '</div>';
-                                        
-                                        $html .= '</div>';
 
+                                        $html .= '</div>';
                                     } elseif ($jenis == "essayNumber") {
                                         $soal_text_jawab = $item['soal_text_jawab'];
 
@@ -159,15 +162,15 @@
 
 
                                         $html .= '<div class="funkyradio">';
-                                        
+
                                         $html .= '<div class="funkyradio-success">';
                                         $html .= '<input disabled type="radio" id="' . $opsional . '" name="opsi_' . $no . '" value="' . $no . '">';
                                         $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">...</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($soal_text_jawab) . '<p></p></div></label>';
                                         $html .= '</div>';
-                                        
+
                                         $html .= '</div>';
                                     } elseif ($jenis == "boolean") {
-                                        
+
                                         $soal_text_jawab = $item['soal_text_jawab'];
 
 
@@ -185,12 +188,10 @@
                                             $html .= '<input disabled type="radio" id="' . $opsional . '" name="opsi_' . $no . '" value="' . strtoupper($opsi[$j]) . '" ' . $checked . '>';
                                             $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">' . strtoupper($j) . '</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($opsi[$j]) . '<p></p></div></label>';
                                             $html .= '</div>';
-
                                         }
                                         $html .= '</div>';
-
                                     } elseif ($jenis == "sort") {
-                                        
+
                                         $soal_text_jawab = json_decode($item['soal_text_jawab']);
 
 
@@ -198,22 +199,19 @@
 
                                         $html .= '<div class="funkyradio">';
 
-                                        for ($j = 0; $j <= count($soal_text_jawab)-1; $j++) {
+                                        for ($j = 0; $j <= count($soal_text_jawab) - 1; $j++) {
 
-                                            
+
                                             $opsional = 'opsi_' . $j . '_' . $no;
-    
+
                                             $html .= '<div class="funkyradio-success">';
                                             $html .= '<input disabled type="radio" id="' . $opsional . '" name="opsi_' . $no . '" value="' . strtoupper($j) . '" >';
                                             $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">' . strtoupper($j) . '</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($soal_text_jawab[$j]) . '<p></p></div></label>';
                                             $html .= '</div>';
-
                                         }
                                         $html .= '</div>';
-
-
                                     } elseif ($jenis == "match") {
-                                        
+
                                         $soal_text_jawab = json_decode($item['soal_text_jawab']);
 
 
@@ -223,15 +221,14 @@
 
                                         for ($j = 0; $j <= count($soal_text_jawab); $j++) {
 
-                                            if( !empty($soal_text_jawab[$j]) ){
+                                            if (!empty($soal_text_jawab[$j])) {
 
                                                 $opsional = 'opsi_' . $j . '_' . $no;
-    
+
                                                 $html .= '<div class="funkyradio-success">';
                                                 $html .= '<input disabled type="radio" id="' . $opsional . '" name="opsi_' . $no . '" value="' . strtoupper($j) . '" >';
                                                 $html .= '<label for="' . $opsional . '"><div class="huruf_opsi">#</div><div class="huruf_opsi_jawaban"><p></p>' . html_entity_decode($soal_text_jawab[$j]) . '<p></p></div></label>';
                                                 $html .= '</div>';
-
                                             }
                                         }
                                         $html .= '</div>';

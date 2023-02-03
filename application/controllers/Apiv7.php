@@ -16,6 +16,12 @@ class Apiv7 extends CI_Controller
 
 
         $this->tahunajaran = $this->m->tahunajaran();
+
+
+        $this->output->set_header("Access-Control-Allow-Origin:*");
+        $this->output->set_header("Access-Control-Allow-Methods:GET,POST");
+        $this->output->set_header("Access-Control-Allow-Headers:Origin, X-Requested-With, Content-Type, Accept");
+
     }
 
     function index()
@@ -23,12 +29,14 @@ class Apiv7 extends CI_Controller
         $data = array();
         $data['message'] = 'Selamat datang di CBT API v7';
         $data['response'] = 'Parameter Failed!';
-        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
+
+        $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data);
     }
 
-    function termofuse(){
-        
+    function termofuse()
+    {
+
         echo '<meta name="viewport" content="width=device-width, initial-scale=1"><div class="container">
         <div class="row content" style="display: flex;">
             <div class="col-lg-12 col-sm-12 col-xs-12">
@@ -411,8 +419,9 @@ class Apiv7 extends CI_Controller
     </div>';
     }
 
-    function privacypolice(){
-        
+    function privacypolice()
+    {
+
         echo '<meta name="viewport" content="width=device-width, initial-scale=1"><div class="container">
         <div class="row content" style="display: flex;">
             <div class="col-lg-12 col-sm-12 col-xs-12">
@@ -596,10 +605,10 @@ class Apiv7 extends CI_Controller
         $version = $this->db->select('*')->from('version')->order_by('version_nomor', 'desc')->limit(1)->get();
         foreach ($version->result() as $v) {
 
-            if( $v->version_nomor >= $versi){
+            if ($v->version_nomor >= $versi) {
 
                 $response["success"] = true;
-    
+
                 $response["response"] = array(
                     "wajib" => $v->version_wajib,
                     "ukuran" => $v->version_ukuran,
@@ -608,14 +617,12 @@ class Apiv7 extends CI_Controller
                     "code" => (int) $v->version_nomor,
                     "code_minimal" => (int) $v->version_nomor_minimal,
                     "link" => $this->config->item('base_url') . '/assets/update/cbt' . $v->version_nomor . '.apk'
-    
-                );
 
+                );
             }
         }
 
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -637,7 +644,7 @@ class Apiv7 extends CI_Controller
             $this->db->update("version", array("version_hits" => ($hits + 1)));
         }
 
-        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
+        $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response);
     }
 
@@ -740,7 +747,7 @@ class Apiv7 extends CI_Controller
 
 
 
-        //$this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
+        //$this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
 
@@ -848,7 +855,7 @@ class Apiv7 extends CI_Controller
 
 
 
-        $this->output->set_header('Content-Type: application/json; charset=utf-8,Access-Control-Allow-Origin: *');
+        $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
 
@@ -967,7 +974,6 @@ class Apiv7 extends CI_Controller
             $response["response"] = "Tidak ditemukan data";
         }
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -1013,7 +1019,6 @@ class Apiv7 extends CI_Controller
 
         ));
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -1106,7 +1111,7 @@ class Apiv7 extends CI_Controller
                 $update_terakhir_jauh = date('Y-m-d H:i:s', strtotime($r2['soal_jawab_last_update'] . " +3600 second"));
 
 
-                $item['waktu'] = $this->_time_since( $r2['soal_jawab_last_update'] );
+                $item['waktu'] = $this->_time_since($r2['soal_jawab_last_update']);
 
                 $tampil = true;
                 if ($sekarang > $update_terakhir) {
@@ -1134,7 +1139,6 @@ class Apiv7 extends CI_Controller
         }
 
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -1171,48 +1175,47 @@ class Apiv7 extends CI_Controller
             }
         }
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data);
     }
 
-    function versilist(){
-		
+    function versilist()
+    {
+
         $response = array();
         $response["success"] = false;
         $response["response"] = array();
 
-		$this->db->select('*');
-		$this->db->from('version');
-        $this->db->order_by('version_nomor','desc');		
+        $this->db->select('*');
+        $this->db->from('version');
+        $this->db->order_by('version_nomor', 'desc');
         $this->db->limit(5);
-		$guru = $this->db->get();
-		
-		foreach ($guru->result_array() as $row){
-			$baris['version_id'] = $row['version_id'];
+        $guru = $this->db->get();
+
+        foreach ($guru->result_array() as $row) {
+            $baris['version_id'] = $row['version_id'];
             $baris['version_jenis'] = $row['version_jenis'];
-			$baris['version_nama'] = $row['version_nama'];
-            $baris['version_nomor']  	= $row['version_nomor'];
+            $baris['version_nama'] = $row['version_nama'];
+            $baris['version_nomor']      = $row['version_nomor'];
             $baris['version_nomor_minimal'] = $row['version_nomor_minimal'];
             $baris['version_text'] = $this->_strip($row["version_text"]);
             $baris['version_ukuran'] = $row['version_ukuran'];
             $baris['version_wajib'] = $row['version_wajib'];
             $baris['version_tanggal'] = $row['version_tanggal'];
             $baris['version_hits'] = $row['version_hits'];
-			
-			array_push($response["response"], $baris);
-		}
 
-
-        if( count($response["response"]) > 0){
-        
-            $response["success"] = true;
-
+            array_push($response["response"], $baris);
         }
-		
-		$this->output->set_header('Content-Type: application/json; charset=utf-8');
-		echo json_encode($response);
-	} 
+
+
+        if (count($response["response"]) > 0) {
+
+            $response["success"] = true;
+        }
+
+        $this->output->set_header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($response);
+    }
 
     /**
      * @return mixed
@@ -1257,7 +1260,6 @@ class Apiv7 extends CI_Controller
             $response = $this->_ujianlist($response);
         }
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -1673,7 +1675,6 @@ class Apiv7 extends CI_Controller
             $response["response"] = "Tidak ditemukan data";
         }
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response);
     }
@@ -1759,7 +1760,6 @@ class Apiv7 extends CI_Controller
                                 ));
                             }
                         }
-
                     } elseif ($jenis == "checked") {
                         $soal_text_jawab = json_decode($soal_text_jawab);
 
@@ -1803,20 +1803,20 @@ class Apiv7 extends CI_Controller
                     } elseif ($jenis == "match") {
 
 
-                        $soal_text_jawab = json_decode($soal_text_jawab);
+                        $soal_text_jawab = json_decode( $soal_text_jawab);
 
                         $text1 = array();
                         $text2 = array();
-                        foreach($soal_text_jawab as $jawab){
-                            $text = explode("#",$jawab);
+                        for ($i = 0; $i < count((array)$soal_text_jawab); $i++) {
+                            $text = explode("#", $soal_text_jawab[$i]);
 
-                            array_push($text1,$text[0]);
-                            array_push($text2,$text[1]);
+                            array_push($text1, $text[0] ?? "");
+
+                            array_push($text2, $text[1] ?? "");
                         }
 
                         
                         shuffle($text2);
-
                         for ($i = 0; $i < count((array)$text1); $i++) {
                             
                             array_push($item["soal_text_jawab"], array(
@@ -1825,9 +1825,9 @@ class Apiv7 extends CI_Controller
                             ));
 
                         }
-                        
 
-                        
+
+
                     } else {
                         //
                     }
@@ -1843,7 +1843,6 @@ class Apiv7 extends CI_Controller
         }
 
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -1887,7 +1886,7 @@ class Apiv7 extends CI_Controller
 
 
         $response["response1"] = array();
-        foreach ($data2 as $soal_jawab_list_opsi_item) {
+        foreach ((array)$data2 as $soal_jawab_list_opsi_item) {
             array_push($response["response1"], $soal_jawab_list_opsi_item);
 
 
@@ -1918,9 +1917,9 @@ class Apiv7 extends CI_Controller
 
                         //samakan jawaban peserta dengan jawaban soal
 
-                        if($soal_text_jawab[$jawaban[0]][0] == 1){
+                        if ($soal_text_jawab[$jawaban[0]][0] == 1) {
                             $jumlah_benar++;
-                        }  
+                        }
 
                         /*
                         $nomor_jawaban = 0;
@@ -1958,17 +1957,14 @@ class Apiv7 extends CI_Controller
                         $soal_text_jawab = json_decode($soal->soal_text_jawab);
 
                         foreach ($jawaban as $key1) {
-                            if($soal_text_jawab[$key1][0] == 1){
+                            if ($soal_text_jawab[$key1][0] == 1) {
                                 $jumlah_benar++;
-                            }                            
-                              
+                            }
                         }
-
                     }
 
                     $jumlah_terjawab++;
                 }
-
             } elseif ($jenis == "essay") {
 
                 /*
@@ -1979,7 +1975,6 @@ class Apiv7 extends CI_Controller
                     //hitung semua yang terjawab
                     $jumlah_terjawab++;
                 }
-
             } elseif ($jenis == "essayText") {
 
                 /*
@@ -1994,10 +1989,10 @@ class Apiv7 extends CI_Controller
                     ))->result();
 
                     foreach ($ambil_soal as $soal) {
-                        $soal_text_jawabs = explode(" ",$soal->soal_text_jawab);
-                        $jawaban = explode(" ",$jawaban[0]);
+                        $soal_text_jawabs = explode(" ", $soal->soal_text_jawab);
+                        $jawaban = explode(" ", $jawaban[0]);
 
-                        foreach ($soal_text_jawabs as $soal_text_jawab){
+                        foreach ($soal_text_jawabs as $soal_text_jawab) {
 
                             if (in_array($soal_text_jawab, $jawaban)) {
                                 $jumlah_benar++;
@@ -2071,18 +2066,16 @@ class Apiv7 extends CI_Controller
 
                         foreach ($soal_text_jawab as $key1 => $value1) {
 
-                            if($jawaban[$key1] == $value1){
+                            if ($jawaban[$key1] == $value1) {
                                 $jumlah_benar++;
                             }
-                              
                         }
-
                     }
 
                     $jumlah_terjawab++;
                 }
             } elseif ($jenis == "match") {
-                
+
                 if (is_array($jawaban) && $jawaban != null) {
 
 
@@ -2094,20 +2087,17 @@ class Apiv7 extends CI_Controller
                     foreach ($ambil_soal as $soal) {
                         //["Katak#Amfibi","Buaya#Reptil","Burung#Herbivora","Kera#Mamalia"]
                         $soal_text_jawab = json_decode($soal->soal_text_jawab);
-    
+
                         foreach ($soal_text_jawab as $key1 => $value1) {
 
                             //["Herbivora","","","Reptil"]
-                            $exp = explode('#',$value1);
-                            if($jawaban[$key1] == $exp[1]){
+                            $exp = explode('#', $value1);
+                            if ($jawaban[$key1] == $exp[1]) {
                                 $jumlah_benar++;
                             }
-
-                              
                         }
-
                     }
-                    
+
                     $jumlah_terjawab++;
                 }
             }
@@ -2159,7 +2149,6 @@ class Apiv7 extends CI_Controller
         $response["success"] = true;
 
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -2178,7 +2167,7 @@ class Apiv7 extends CI_Controller
 
         $ss = $this->db->get_where('soal_jawab', array("soal_jawab_id" => $id));
         foreach ($ss->result_array() as $r2) {
-            $perhatian = (int ) $r2['soal_jawab_perhatian'];
+            $perhatian = (int) $r2['soal_jawab_perhatian'];
             $perhatian++;
         }
 
@@ -2198,7 +2187,6 @@ class Apiv7 extends CI_Controller
         $response["success"] = true;
 
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -2211,10 +2199,10 @@ class Apiv7 extends CI_Controller
         $response["response"] = array();
         $id     = $this->input->get('id');
 
-        
 
-        $data1 = $this->db->get_where('soal_jawab',array('soal_jawab_id' => $id))->result();
-        
+
+        $data1 = $this->db->get_where('soal_jawab', array('soal_jawab_id' => $id))->result();
+
 
         $update_ = array();
 
@@ -2228,44 +2216,44 @@ class Apiv7 extends CI_Controller
 
         $response["response1"] = array();
 
-        foreach($data1 as $rr){
+        foreach ($data1 as $rr) {
             $data2 = json_decode($rr->soal_jawab_list_opsi);
-            
-            foreach ($data2 as $soal_jawab_list_opsi_item) {            
+
+            foreach ($data2 as $soal_jawab_list_opsi_item) {
                 array_push($response["response1"], $soal_jawab_list_opsi_item);
-    
-    
+
+
                 $id_soal = $soal_jawab_list_opsi_item[0];
                 $jenis = $soal_jawab_list_opsi_item[1];
                 $ragu = $soal_jawab_list_opsi_item[2];
                 $jawaban    = $soal_jawab_list_opsi_item[3];
-    
-    
+
+
                 array_push($update_, array($id_soal, $jenis, $ragu, $jawaban));
-    
+
                 if ($jenis == "optional") {
-    
+
                     /*
                     Samakan jawaban pengguna dengan jawaban soal server yang bernilai 1|benar
                     */
-    
+
                     if (is_array($jawaban) && $jawaban != null) {
                         //cari jawaban pada soal dengan $id_soal
                         $ambil_soal = $this->db->get_where('soal', array(
                             'soal_tahunajaran' => $this->tahunajaran,
                             'soal_id' => $id_soal
                         ))->result();
-    
+
                         foreach ($ambil_soal as $soal) {
                             $soal_text_jawab = json_decode($soal->soal_text_jawab);
-    
-    
+
+
                             //samakan jawaban peserta dengan jawaban soal
-    
-                            if($soal_text_jawab[$jawaban[0]][0] == 1){
+
+                            if ($soal_text_jawab[$jawaban[0]][0] == 1) {
                                 $jumlah_benar++;
-                            }  
-    
+                            }
+
                             /*
                             $nomor_jawaban = 0;
                             foreach ($soal_text_jawab as $soal_text_jawab_item) {
@@ -2277,12 +2265,12 @@ class Apiv7 extends CI_Controller
                                 $nomor_jawaban++;
                             }*/
                         }
-    
+
                         $jumlah_terjawab++;
                     }
                 } elseif ($jenis == "checked") {
-    
-    
+
+
                     /*
                     Samakan beberapa jawaban pengguna dengan jawaban soal server yang bernilai sama 1=1, 2=2
                     Lalu jumlah berdasarkan nilai yang di dapat misal
@@ -2290,174 +2278,164 @@ class Apiv7 extends CI_Controller
     
                     yang berarti 1 soal bisa bernilai total 1,2,3,4 = 10 tidak menjawab 0
                     */
-    
+
                     if (is_array($jawaban) && $jawaban != null) {
                         //cari jawaban pada soal dengan $id_soal
                         $ambil_soal = $this->db->get_where('soal', array(
                             'soal_tahunajaran' => $this->tahunajaran,
                             'soal_id' => $id_soal
                         ))->result();
-    
+
                         foreach ($ambil_soal as $soal) {
                             $soal_text_jawab = json_decode($soal->soal_text_jawab);
-    
+
                             foreach ($jawaban as $key1) {
-                                if($soal_text_jawab[$key1][0] == 1){
+                                if ($soal_text_jawab[$key1][0] == 1) {
                                     $jumlah_benar++;
-                                }                            
-                                  
+                                }
                             }
-    
                         }
-    
+
                         $jumlah_terjawab++;
                     }
-    
                 } elseif ($jenis == "essay") {
-    
+
                     /*
                     Samakan jawaban pengguna dengan jawaban soal server 
                     */
-    
+
                     if (is_array($jawaban) && $jawaban != null) {
                         //hitung semua yang terjawab
                         $jumlah_terjawab++;
                     }
-    
                 } elseif ($jenis == "essayText") {
-    
+
                     /*
                     Samakan jawaban pengguna dengan jawaban soal server text short
                     */
-    
+
                     if (is_array($jawaban) && $jawaban != null) {
                         //cari jawaban pada soal dengan $id_soal
                         $ambil_soal = $this->db->get_where('soal', array(
                             'soal_tahunajaran' => $this->tahunajaran,
                             'soal_id' => $id_soal
                         ))->result();
-    
+
                         foreach ($ambil_soal as $soal) {
-                            $soal_text_jawabs = explode(" ",$soal->soal_text_jawab);
-                            $jawaban = explode(" ",$jawaban[0]);
-    
-                            foreach ($soal_text_jawabs as $soal_text_jawab){
-    
+                            $soal_text_jawabs = explode(" ", $soal->soal_text_jawab);
+                            $jawaban = explode(" ", $jawaban[0]);
+
+                            foreach ($soal_text_jawabs as $soal_text_jawab) {
+
                                 if (in_array($soal_text_jawab, $jawaban)) {
                                     $jumlah_benar++;
                                 }
                             }
                         }
-    
+
                         $jumlah_terjawab++;
                     }
                 } elseif ($jenis == "essayNumber") {
-    
+
                     /*
                     Samakan jawaban pengguna dengan jawaban soal server number
                     */
-    
+
                     if (is_array($jawaban) && $jawaban != null) {
                         //cari jawaban pada soal dengan $id_soal
                         $ambil_soal = $this->db->get_where('soal', array(
                             'soal_tahunajaran' => $this->tahunajaran,
                             'soal_id' => $id_soal
                         ))->result();
-    
+
                         foreach ($ambil_soal as $soal) {
                             $soal_text_jawab = $soal->soal_text_jawab;
-    
+
                             if ($soal_text_jawab == $jawaban[0]) {
                                 $jumlah_benar++;
                             }
                         }
-    
+
                         $jumlah_terjawab++;
                     }
                 } elseif ($jenis == "boolean") {
-    
+
                     /*
                     Samakan jawaban 0/1 pengguna dengan jawaban soal server
                     */
-    
+
                     if (is_array($jawaban) && $jawaban != null) {
                         //cari jawaban pada soal dengan $id_soal
                         $ambil_soal = $this->db->get_where('soal', array(
                             'soal_tahunajaran' => $this->tahunajaran,
                             'soal_id' => $id_soal
                         ))->result();
-    
+
                         foreach ($ambil_soal as $soal) {
                             $soal_text_jawab = $soal->soal_text_jawab;
-    
+
                             if ($soal_text_jawab == $jawaban[0]) {
                                 $jumlah_benar++;
                             }
                         }
-    
+
                         $jumlah_terjawab++;
                     }
                 } elseif ($jenis == "sort") {
-    
+
                     /*
                     Samakan urutan jawaban pengguna dengan jawaban soal
                     */
-    
+
                     if (is_array($jawaban) && $jawaban != null) {
                         //cari jawaban pada soal dengan $id_soal
                         $ambil_soal = $this->db->get_where('soal', array(
                             'soal_tahunajaran' => $this->tahunajaran,
                             'soal_id' => $id_soal
                         ))->result();
-    
+
                         foreach ($ambil_soal as $soal) {
                             $soal_text_jawab = json_decode($soal->soal_text_jawab);
-    
+
                             foreach ($soal_text_jawab as $key1 => $value1) {
-    
-                                if($jawaban[$key1] == $value1){
+
+                                if ($jawaban[$key1] == $value1) {
                                     $jumlah_benar++;
                                 }
-                                  
                             }
-    
                         }
-    
+
                         $jumlah_terjawab++;
                     }
                 } elseif ($jenis == "match") {
-                    
+
                     if (is_array($jawaban) && $jawaban != null) {
-    
+
                         $ambil_soal = $this->db->get_where('soal', array(
                             'soal_tahunajaran' => $this->tahunajaran,
                             'soal_id' => $id_soal
                         ))->result();
-    
+
                         foreach ($ambil_soal as $soal) {
                             //["Katak#Amfibi","Buaya#Reptil","Burung#Herbivora","Kera#Mamalia"]
                             $soal_text_jawab = json_decode($soal->soal_text_jawab);
-    
+
                             foreach ($soal_text_jawab as $key1 => $value1) {
 
                                 //["Herbivora","","","Reptil"]
-                                $exp = explode('#',$value1);
-                                if($jawaban[$key1] == $exp[1]){
+                                $exp = explode('#', $value1);
+                                if ($jawaban[$key1] == $exp[1]) {
                                     $jumlah_benar++;
                                 }
-
-                                  
                             }
-    
                         }
 
                         $jumlah_terjawab++;
                     }
                 }
-    
+
                 $jumlah_soal++;
             }
-
         }
 
         $jumlah_tidakterjawab = $jumlah_soal - $jumlah_terjawab;
@@ -2491,7 +2469,6 @@ class Apiv7 extends CI_Controller
         $response["data"] = $dd;
 
 
-        $this->output->set_header('Access-Control-Allow-Origin: *');
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
@@ -2508,7 +2485,8 @@ class Apiv7 extends CI_Controller
      */
 
 
-    function arsip_listby(){
+    function arsip_listby()
+    {
         $response = array();
         $response["success"] = false;
         $response["response"] = array();
@@ -2519,67 +2497,63 @@ class Apiv7 extends CI_Controller
 
         $this->db->select('*')->from('soal');
 
-        if(!empty($untuk) && !empty($kelas) && !empty($tahun)){
+        if (!empty($untuk) && !empty($kelas) && !empty($tahun)) {
 
             $this->db->where('soal_tahunajaran', $tahun);
             $this->db->where('soal_kelas', $kelas);
             $this->db->where('soal_untuk', $untuk);
             //$this->db->where('soal_jurusan !=', "");
-            $this->db->group_by('soal_jurusan');  
-            $this->db->order_by('soal_jurusan','asc');
-
-        }elseif(!empty($kelas) && !empty($tahun)){
+            $this->db->group_by('soal_jurusan');
+            $this->db->order_by('soal_jurusan', 'asc');
+        } elseif (!empty($kelas) && !empty($tahun)) {
 
             $this->db->where('soal_tahunajaran', $tahun);
             $this->db->where('soal_kelas', $kelas);
             $this->db->where('soal_untuk !=', "");
-            $this->db->group_by('soal_untuk');  
-            $this->db->order_by('soal_untuk','asc');
+            $this->db->group_by('soal_untuk');
+            $this->db->order_by('soal_untuk', 'asc');
+        } elseif (!empty($tahun)) {
 
-        }elseif(!empty($tahun)){
-            
             $this->db->where('soal_tahunajaran', $tahun);
             $this->db->where('soal_kelas !=', "");
-            $this->db->group_by('soal_kelas');  
-            $this->db->order_by('soal_kelas','asc');
+            $this->db->group_by('soal_kelas');
+            $this->db->order_by('soal_kelas', 'asc');
+        } else {
 
-        }else{       
-             
-            $this->db->group_by('soal_tahunajaran');         
+            $this->db->group_by('soal_tahunajaran');
         }
 
-         
-        $this->db->order_by('soal_id','desc');
 
-         
+        $this->db->order_by('soal_id', 'desc');
 
 
-        foreach ($this->db->get()->result() as $ta){
+
+
+        foreach ($this->db->get()->result() as $ta) {
             $item = array();
 
-            if(!empty($untuk) && !empty($kelas) && !empty($tahun)){
+            if (!empty($untuk) && !empty($kelas) && !empty($tahun)) {
 
                 array_push($response["response"], !empty($ta->soal_jurusan) ? $ta->soal_jurusan : "Semua Jurusan");
-            }elseif(!empty($kelas) && !empty($tahun)){
+            } elseif (!empty($kelas) && !empty($tahun)) {
 
                 array_push($response["response"], $ta->soal_untuk);
-            }elseif(!empty($tahun)){
+            } elseif (!empty($tahun)) {
 
                 array_push($response["response"], $ta->soal_kelas);
-            }else{                
+            } else {
                 array_push($response["response"], $ta->soal_tahunajaran);
             }
-
-
         }
         $response["success"] = true;
 
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
-        echo json_encode( $response );
+        echo json_encode($response);
     }
 
 
-    function arsip(){
+    function arsip()
+    {
         $response = array();
         $response["success"] = false;
         $response["response"] = array();
@@ -2595,7 +2569,7 @@ class Apiv7 extends CI_Controller
         $this->db->where('soal_kelas', $kelas);
         $this->db->where('soal_untuk', $untuk);
 
-        if(!empty($jurusan)){
+        if (!empty($jurusan)) {
             $this->db->where('soal_jurusan', "");
             $this->db->or_where('soal_jurusan', $jurusan);
         }
@@ -2647,11 +2621,12 @@ class Apiv7 extends CI_Controller
         $response["success"] = true;
 
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
-        echo json_encode( $response );
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
     }
 
-    
-	function arsip_view() {
+
+    function arsip_view()
+    {
         $response = array();
         $response["success"] = false;
         $response["response"] = array();
@@ -2662,12 +2637,12 @@ class Apiv7 extends CI_Controller
         $untuk = $this->input->get('untuk');
         $jurusan = $this->input->get('jurusan');
 
-		$pelajaran = $this->input->get("pelajaran");
-		$guru = $this->input->get("guru");
+        $pelajaran = $this->input->get("pelajaran");
+        $guru = $this->input->get("guru");
 
 
 
-		$this->db->select('*')->from('soal');
+        $this->db->select('*')->from('soal');
 
         $this->db->where('soal_tahunajaran', $tahun);
         $this->db->where('soal_kelas', $kelas);
@@ -2679,35 +2654,33 @@ class Apiv7 extends CI_Controller
         $this->db->where('soal_guru', $guru);
 
 
-		$this->db->order_by("soal_id", "asc");
+        $this->db->order_by("soal_id", "asc");
 
-		$this->db->limit(60);
+        $this->db->limit(60);
 
-		foreach ($this->db->get()->result_array() as $soal){
+        foreach ($this->db->get()->result_array() as $soal) {
 
 
-			$soal_parent_id = $soal["soal_parent_id"];
+            $soal_parent_id = $soal["soal_parent_id"];
 
-			$soal["soal_parent_id"] = $soal_parent_id;
-			$soal["soal_parent_text"] = "";
+            $soal["soal_parent_id"] = $soal_parent_id;
+            $soal["soal_parent_text"] = "";
 
-			$this->db->select('*')->from('soal_parent');
-			$this->db->where('soal_parent_id', $soal_parent_id);
-			foreach ($this->db->get()->result_array() as $soal_parent){
-				$soal["soal_parent_text"] = $soal_parent["soal_parent_text"];
-			}
+            $this->db->select('*')->from('soal_parent');
+            $this->db->where('soal_parent_id', $soal_parent_id);
+            foreach ($this->db->get()->result_array() as $soal_parent) {
+                $soal["soal_parent_text"] = $soal_parent["soal_parent_text"];
+            }
 
-			array_push($response['response'],$soal);
-
-		}
+            array_push($response['response'], $soal);
+        }
 
         //$this->output->set_header('Access-Control-Allow-Origin: *');
         //$this->output->set_header('Content-Type: application/json; charset=utf-8');
         //echo json_encode($response, JSON_UNESCAPED_UNICODE);
 
-        $this->load->view('arsip_view',$response);
-
-	}
+        $this->load->view('arsip_view', $response);
+    }
 
 
 
